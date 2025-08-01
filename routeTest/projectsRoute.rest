@@ -1,0 +1,38 @@
+//Create 
+POST http://localhost:5000/projects/
+Content-Type: application/json
+
+{
+    "name": "Project Test", 
+    "description": "This is a text project to see if the routes are working correctly."
+}
+
+###
+
+//Get all
+GET http://localhost:5000/projects/ 
+Content-Type: application/json
+
+
+###
+
+//Get one
+GET http://localhost:5000/projects/688bac8f7efa8d053476e243
+Content-Type: application/json
+
+###
+
+//Update 
+PUT http://localhost:5000/projects/688bac8f7efa8d053476e243
+Content-Type: application/json
+
+{
+    "name": "Project Test Changed", 
+    "description": "Changed Text Test"
+}
+
+###
+
+//Update 
+DELETE http://localhost:5000/projects/688bac8f7efa8d053476e243
+Content-Type: application/json
