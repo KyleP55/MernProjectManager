@@ -1,22 +1,15 @@
 //Create 
-POST http://localhost:5000/tasks/
+POST http://localhost:5000/checklist/
 Content-Type: application/json
 
 {
-    "name": "Create Task API 22", 
-    "description": "Task objects must have a start time, default end date, projectID. No check list items.",
-    "projectId": "688cea7de5ce339b3fd1817f",
-    "checklist": [
-        {
-            "description": "Second project, Second Task"
-        }
-    ]
+    "description": "Checklist Item Test. do Stuff."
 }
 
 ###
 
 //Get all
-GET http://localhost:5000/tasks/ 
+GET http://localhost:5000/checklist?projectId=688cea7de5ce339b3fd1817f&taskId=688ceaaee5ce339b3fd18185
 Content-Type: application/json
 
 

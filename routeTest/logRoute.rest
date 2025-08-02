@@ -1,0 +1,42 @@
+//Create 
+POST http://localhost:5000/logs/
+Content-Type: application/json
+
+{
+    "notes": "General log item"
+}
+
+###
+
+//Get all
+GET http://localhost:5000/logs?projectId=688cea7de5ce339b3fd1817f&taskId=688ceaaee5ce339b3fd18185
+Content-Type: application/json
+
+
+###
+
+//Get one
+GET http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+Content-Type: application/json
+
+###
+
+//Update 
+PUT http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+Content-Type: application/json
+
+{
+    "completedDate": "2025-07-31T16:20:00.000Z"
+}
+
+###
+
+//Complete 
+PATCH http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4/complete
+Content-Type: application/json
+
+###
+
+//Delete 
+DELETE http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+Content-Type: application/json

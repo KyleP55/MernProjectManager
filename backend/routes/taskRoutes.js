@@ -18,6 +18,6 @@ router.route('/:id')
     .put(updateTask)
     .delete(deleteTask);
 
-router.put('/:id/complete', completeTask);
+router.patch('/:id/complete', completeTask);
 
 module.exports = router;

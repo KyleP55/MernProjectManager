@@ -18,19 +18,27 @@ app.use(cors({
 // routes
 const projectRoutes = require('./routes/projectRoutes.js');
 const tasksRoutes = require('./routes/taskRoutes.js');
+const checklistRoutes = require('./routes/checklistRoutes.js');
+const logRoutes = require('./routes/logRoutes.js');
 
 app.use('/projects', projectRoutes);
 app.use('/tasks', tasksRoutes);
+app.use('/checklists', checklistRoutes);
+app.use('/logs', logRoutes);
 
-// mongo
-mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-    .then(() => {
-        console.log('MongoDB connected');
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// mongo/server
+if (process.env.NODE_ENV !== 'test') {
+    mongoose.connect(MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
     })
-    .catch(err => {
-        console.error('MongoDB connection failed:', err.message);
-    });
+        .then(() => {
+            console.log('MongoDB connected');
+            app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        })
+        .catch(err => {
+            console.error('MongoDB connection failed:', err.message);
+        });
+}
+
+module.exports = app;

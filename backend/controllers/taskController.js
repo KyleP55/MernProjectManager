@@ -1,5 +1,5 @@
 const Task = require('../models/Task');
-const Checklist = require('../models/ChecklistItem');
+const Checklist = require('../models/Checklist');
 
 // Create task + checklists
 exports.createTask = async (req, res) => {
