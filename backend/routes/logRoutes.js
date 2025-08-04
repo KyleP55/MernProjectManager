@@ -5,13 +5,15 @@ const {
     getLogById,
     updateLog,
     deleteLog,
-    toggleLogComplete
+    toggleLogComplete,
+    getTime
 } = require('../controllers/logController.js');
 
 const router = express.Router();
 
 router.post('/', createLog);
 router.get('/', getLogs);
+router.get('/getTime', getTime)
 router.get('/:id', getLogById);
 router.put('/:id', updateLog);
 router.delete('/:id', deleteLog);

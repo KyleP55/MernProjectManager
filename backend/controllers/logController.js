@@ -16,6 +16,7 @@ const getLogs = async (req, res) => {
         const { projectId, taskId, checklistId, startDate, endDate } = req.query;
         const filter = {};
 
+        if (projectId) filter.projectsWorkedOn = projectId;
         if (taskId) filter.tasksWorkedOn = taskId;
         if (checklistId) filter.checklistsWorkedOn = checklistId;
 
@@ -23,13 +24,6 @@ const getLogs = async (req, res) => {
             filter.timeIn = {};
             if (startDate) filter.timeIn.$gte = new Date(startDate);
             if (endDate) filter.timeIn.$lte = new Date(endDate);
-        }
-
-        // Filter by project indirectly via Task
-        if (projectId) {
-            const tasks = await Task.find({ projectId }, '_id');
-            const taskIds = tasks.map(t => t._id);
-            filter.tasksWorkedOn = { $in: taskIds };
         }
 
         const logs = await Log.find(filter).sort({ timeIn: -1 });
@@ -83,11 +77,51 @@ const toggleLogComplete = async (req, res) => {
     }
 };
 
+const getTime = async (req, res) => {
+    console.log('hit')
+    try {
+        const { projectId, taskId, checklistId, startDate, endDate } = req.query;
+        const filter = {};
+
+        if (projectId) filter.projectsWorkedOn = projectId;
+        if (taskId) filter.tasksWorkedOn = taskId;
+        if (checklistId) filter.checklistsWorkedOn = checklistId;
+
+        if (startDate || endDate) {
+            filter.timeIn = {};
+            if (startDate) filter.timeIn.$gte = new Date(startDate);
+            if (endDate) filter.timeIn.$lte = new Date(endDate);
+        }
+
+        const logs = await Log.find(filter).sort({ timeIn: -1 });
+
+        let totalMs = 0;
+
+        for (const log of logs) {
+            if (log.timeIn && log.timeOut) {
+                totalMs += new Date(log.timeOut) - new Date(log.timeIn);
+            }
+        }
+
+        res.json({ timeSpent: formatMsToTime(totalMs) });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
 module.exports = {
     createLog,
     getLogs,
     getLogById,
     updateLog,
     deleteLog,
-    toggleLogComplete
+    toggleLogComplete,
+    getTime
+};
+
+const formatMsToTime = ms => {
+    const totalMinutes = Math.floor(ms / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${hours}h ${minutes}m`;
 };

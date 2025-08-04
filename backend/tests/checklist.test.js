@@ -3,10 +3,12 @@ const app = require('../server');
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
+const Log = require('../models/Log');
 
 describe('Checklist API - Complete logic', () => {
     let project;
     let task;
+    let log;
 
     beforeEach(async () => {
         project = await Project.create({

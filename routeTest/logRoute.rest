@@ -3,40 +3,48 @@ POST http://localhost:5000/logs/
 Content-Type: application/json
 
 {
-    "notes": "General log item"
+    "notes": "General log item",
+    "projectsWorkedOn": ["688ecd4b015d533e6bfa78a0"],
+    "checklistsWorkedOn": ["688ecd71015d533e6bfa78a5"]
 }
 
 ###
 
 //Get all
-GET http://localhost:5000/logs?projectId=688cea7de5ce339b3fd1817f&taskId=688ceaaee5ce339b3fd18185
+GET http://localhost:5000/logs?projectId=688ecd4b015d533e6bfa78a0
 Content-Type: application/json
 
 
 ###
 
 //Get one
-GET http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+GET http://localhost:5000/logs/688ece14015d533e6bfa78b0
 Content-Type: application/json
 
 ###
 
 //Update 
-PUT http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+PUT http://localhost:5000/logs/688ed0b43674d930f0ab7809
 Content-Type: application/json
 
 {
-    "completedDate": "2025-07-31T16:20:00.000Z"
+    "notes": "Updated Log Notes"
 }
 
 ###
 
 //Complete 
-PATCH http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4/complete
+PATCH http://localhost:5000/logs/688ed0743674d930f0ab7805/complete
 Content-Type: application/json
 
 ###
 
 //Delete 
-DELETE http://localhost:5000/logs/688c232e8ebf8dae2fdb5be4
+DELETE http://localhost:5000/logs/688ed0b43674d930f0ab7809
+Content-Type: application/json
+
+###
+
+//Get time
+GET http://localhost:5000/logs/getTime?projectId=688ecd4b015d533e6bfa78a0
 Content-Type: application/json
