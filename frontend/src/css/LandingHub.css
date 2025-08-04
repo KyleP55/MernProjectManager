@@ -1,0 +1,81 @@
+.hub-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 24px;
+  gap: 24px;
+}
+
+.sidebar {
+  width: 100%;
+  max-width: 50%;
+  padding-right: 24px;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-header h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.sidebar-header button {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.sidebar-header button:hover {
+  background-color: #1e40af;
+}
+
+.sidebar select {
+  padding: 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.card {
+  background-color: white;
+  padding: 16px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.card li {
+  margin-bottom: 4px;
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 16px;
+}
+
+.main-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}

@@ -1,9 +1,9 @@
-import ProjectSidebar from './components/ProjectSidebar';
+import HubPage from './pages/HubPage';
 
 function App() {
   return (
     <div className="App">
-      <ProjectSidebar />
+      <HubPage />
     </div>
   );
 }
