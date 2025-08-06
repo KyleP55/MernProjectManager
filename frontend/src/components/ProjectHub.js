@@ -30,6 +30,7 @@ function ProjectHub({ setProjectId }) {
         if (!selectedProjectId) return;
 
         const fetchStats = async () => {
+            setProjectId(selectedProjectId);
             try {
                 const res = await fetch(`${BACKEND_URL}/projects/${selectedProjectId}/stats`);
                 const data = await res.json();
@@ -80,7 +81,7 @@ function ProjectHub({ setProjectId }) {
             <>
                 <div className="card">
                     <h3>Description</h3>
-                    <p>{selectedProject.description || 'No description provided.'}</p>
+                    <p style={{ whiteSpace: 'pre-line' }}>{selectedProject.description || 'No description provided.'}</p>
                 </div>
 
                 <div className="card">

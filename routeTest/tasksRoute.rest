@@ -5,10 +5,13 @@ Content-Type: application/json
 {
     "name": "Create Task API 151516", 
     "description": "Task objects must have a start time, default end date, projectID. No check list items.",
-    "projectId": "688ecd9c015d533e6bfa78a7",
+    "projectId": "6890ecd84c1f1c74dcd5c3a2",
     "checklist": [
         {
-            "description": "Newer project, first Task"
+            "description": "Newer project, first checklist item"
+        },
+        {
+            "description": "Newer project, second checklist item"
         }
     ]
 }

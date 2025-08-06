@@ -51,7 +51,7 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
                     <textarea
                         value={description}
                         onChange={e => setDescription(e.target.value)}
-                        rows={3}
+                        rows={5}
                     />
                 </label>
 

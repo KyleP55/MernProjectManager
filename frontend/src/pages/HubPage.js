@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import '../css/LandingHub.css';
 
 import ProjectHub from '../components/ProjectHub';
+import TaskHub from '../components/TaskHub';
 
 const LandingHubPage = () => {
     const [selectedProjectId, setSelectedProjectId] = useState('');
 
     function onSelectedProject(id) {
+        console.log(selectedProjectId)
         setSelectedProjectId(id);
     }
 
@@ -14,11 +16,8 @@ const LandingHubPage = () => {
         <div className="hub-container">
 
             <ProjectHub setProjectId={onSelectedProject} />
+            <TaskHub projectId={selectedProjectId} />
 
-            <div className="main-content">
-                <h2>Project Dashboard</h2>
-                <p>Select a project to see more data or begin working.</p>
-            </div>
         </div>
     );
 };
