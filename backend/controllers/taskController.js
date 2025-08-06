@@ -30,6 +30,12 @@ exports.getTasks = async (req, res) => {
         const filter = projectId ? { projectId } : {};
 
         const tasks = await Task.find(filter).sort({ createdAt: -1 });
+
+        for (const task of tasks) {
+            const checklistItems = await Checklist.find({ taskId: task._id });
+            task._doc.checklistItems = checklistItems;
+        }
+
         res.json(tasks);
     } catch (err) {
         res.status(500).json({ error: err.message });

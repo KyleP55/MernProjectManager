@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import '../css/TaskHub.css';
 
+import CreateTaskModal from './CreateTaskModal';
+
 const BACKEND_URL = 'http://localhost:5000';
 
 const TaskHub = ({ projectId }) => {
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
+    const [showModal, setShowModal] = useState(null);
 
     useEffect(() => {
-        console.log(projectId)
         if (!projectId) return;
 
         const fetchTasks = async () => {
             try {
                 const res = await fetch(`${BACKEND_URL}/tasks?projectId${projectId}`);
                 const data = await res.json();
+
                 setTasks(data);
             } catch (err) {
                 console.error('Failed to fetch tasks:', err);
@@ -33,12 +36,17 @@ const TaskHub = ({ projectId }) => {
     };
 
     return (
-        <div className="task-section">
-            <div className="task-header-row">
-                <h2 className="section-title">Tasks</h2>
-                <button className="create-btn" onClick={handleCreateTask}>
-                    + New Task
-                </button>
+        <div className="">
+            <div className="sidebar-header">
+                <h2>Tasks</h2>
+                <button onClick={() => setShowModal(true)}>New Task</button>
+
+                {showModal && (
+                    <CreateTaskModal
+                        onCreate={handleCreateTask}
+                        onCancel={() => setShowModal(false)}
+                    />
+                )}
             </div>
 
             {tasks.map(task => (
@@ -49,8 +57,8 @@ const TaskHub = ({ projectId }) => {
                     </div>
                     <p className="task-desc">{task.description}</p>
                     <div className="task-dates">
-                        <span>Start: {task.startDate?.slice(0, 10)}</span>
-                        <span>End: {task.endDate?.slice(0, 10)}</span>
+                        <span>Start: {task.date?.slice(0, 10)}</span>
+                        <span>End: {task.dateCompleted ? task.dateCompleted?.slice(0, 10) : 'In Progress'}</span>
                     </div>
 
                     <button
@@ -62,11 +70,11 @@ const TaskHub = ({ projectId }) => {
 
                     {expandedTaskId === task._id && (
                         <ul className="checklist">
-                            {task.checklist && task.checklist.length > 0 ? (
-                                task.checklist.map(item => (
+                            {task.checklistItems && task.checklistItems.length > 0 ? (
+                                task.checklistItems.map(item => (
                                     <li key={item._id}>
                                         <input type="checkbox" checked={item.completed} readOnly />
-                                        {item.title}
+                                        {item.description}
                                     </li>
                                 ))
                             ) : (
