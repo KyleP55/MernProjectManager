@@ -5,15 +5,15 @@ const Checklist = require('../models/Checklist');
 exports.createTask = async (req, res) => {
     try {
         const { name, description, projectId, checklist = [] } = req.body;
-        console.log('hit')
 
         const task = new Task({ name, description, projectId });
 
+        console.log(checklist)
         const checklistDocs = await Checklist.insertMany(
             checklist.map(item => ({
-                ...item,
-                taskId: task._id,
-                projectId
+                description: item,
+                projectId,
+                taskId: task._id
             }))
         );
         await task.save();

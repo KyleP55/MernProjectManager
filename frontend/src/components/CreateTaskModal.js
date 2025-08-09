@@ -35,7 +35,7 @@ const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
                 body: JSON.stringify({ name, description, projectId, checklist: checklistItems }),
             });
 
-            //if (!res.ok) throw new Error('Failed to create project');
+            if (!res.ok) throw new Error('Failed to create project');
             const created = await res.json();
             //onProjectCreated(created);
             //onClose();
