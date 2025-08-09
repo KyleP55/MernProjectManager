@@ -32,7 +32,7 @@ const TaskHub = ({ projectId }) => {
     };
 
     const handleCreateTask = () => {
-        alert('TODO: Show create task modal or form');
+
     };
 
     return (
@@ -45,6 +45,7 @@ const TaskHub = ({ projectId }) => {
                     <CreateTaskModal
                         onCreate={handleCreateTask}
                         onCancel={() => setShowModal(false)}
+                        projectId={projectId}
                     />
                 )}
             </div>

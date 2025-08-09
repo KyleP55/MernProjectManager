@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import '../css/CreateTaskModal.css';
 
-const CreateTaskModal = ({ onCreate, onCancel }) => {
+const BACKEND_URL = 'http://localhost:5000';
+
+const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [checklistInput, setChecklistInput] = useState('');
@@ -18,13 +20,29 @@ const CreateTaskModal = ({ onCreate, onCancel }) => {
         setChecklistItems(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         if (!name.trim()) return alert('Task name is required.');
         onCreate({
             name,
             description,
             checklistItems,
         });
+
+        try {
+            const res = await fetch(`${BACKEND_URL}/tasks`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, projectId, checklist: checklistItems }),
+            });
+
+            //if (!res.ok) throw new Error('Failed to create project');
+            const created = await res.json();
+            //onProjectCreated(created);
+            //onClose();
+        } catch (err) {
+            console.error(err);
+            //setError('Something went wrong.');
+        }
     };
 
     return (
