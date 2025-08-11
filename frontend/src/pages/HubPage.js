@@ -8,7 +8,6 @@ const LandingHubPage = () => {
     const [selectedProjectId, setSelectedProjectId] = useState('');
 
     function onSelectedProject(id) {
-        console.log(selectedProjectId)
         setSelectedProjectId(id);
     }
 

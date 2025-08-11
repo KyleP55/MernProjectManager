@@ -15,10 +15,10 @@ const TaskHub = ({ projectId }) => {
             setTasks([]);
             return;
         }
-
+        console.log(projectId)
         const fetchTasks = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/tasks?projectId${projectId}`);
+                const res = await fetch(`${BACKEND_URL}/tasks?projectId=${projectId}`);
                 const data = await res.json();
 
                 setTasks(data);

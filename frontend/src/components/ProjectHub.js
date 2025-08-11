@@ -69,7 +69,9 @@ function ProjectHub({ setProjectId }) {
             value={selectedProjectId}
             onChange={e => setSelectedProjectId(e.target.value)}
         >
-            <option value="">Select a project</option>
+            {!selectedProjectId &&
+                <option value="">Select a project</option>
+            }
             {projects.map(project => (
                 <option key={project._id} value={project._id}>
                     {project.name}

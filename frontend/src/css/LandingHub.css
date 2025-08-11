@@ -1,8 +1,11 @@
+html, body{
+    margin: 0px;
+}
+
 .hub-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background-color: #f9fafb;
-  padding: 24px;
   gap: 24px;
 }
 
