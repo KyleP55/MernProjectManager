@@ -8,7 +8,6 @@ exports.createTask = async (req, res) => {
 
         const task = new Task({ name, description, projectId });
 
-        console.log(checklist)
         const checklistDocs = await Checklist.insertMany(
             checklist.map(item => ({
                 description: item,

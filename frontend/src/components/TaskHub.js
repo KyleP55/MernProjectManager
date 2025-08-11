@@ -8,10 +8,13 @@ const BACKEND_URL = 'http://localhost:5000';
 const TaskHub = ({ projectId }) => {
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
-    const [showModal, setShowModal] = useState(null);
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
-        if (!projectId) return;
+        if (!projectId) {
+            setTasks([]);
+            return;
+        }
 
         const fetchTasks = async () => {
             try {
@@ -31,12 +34,12 @@ const TaskHub = ({ projectId }) => {
         setExpandedTaskId(prev => prev === taskId ? null : taskId);
     };
 
-    const handleCreateTask = () => {
-
+    const handleCreateTask = (newTask) => {
+        setTasks(prev => [...prev, newTask]);
     };
 
     return (
-        <div className="">
+        <div className="task-section">
             <div className="sidebar-header">
                 <h2>Tasks</h2>
                 <button onClick={() => setShowModal(true)}>New Task</button>
@@ -44,7 +47,7 @@ const TaskHub = ({ projectId }) => {
                 {showModal && (
                     <CreateTaskModal
                         onCreate={handleCreateTask}
-                        onCancel={() => setShowModal(false)}
+                        onClose={() => setShowModal(false)}
                         projectId={projectId}
                     />
                 )}

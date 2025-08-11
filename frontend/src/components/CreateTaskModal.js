@@ -3,7 +3,7 @@ import '../css/CreateTaskModal.css';
 
 const BACKEND_URL = 'http://localhost:5000';
 
-const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
+const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [checklistInput, setChecklistInput] = useState('');
@@ -22,11 +22,6 @@ const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
 
     const handleCreate = async () => {
         if (!name.trim()) return alert('Task name is required.');
-        onCreate({
-            name,
-            description,
-            checklistItems,
-        });
 
         try {
             const res = await fetch(`${BACKEND_URL}/tasks`, {
@@ -37,8 +32,15 @@ const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
 
             if (!res.ok) throw new Error('Failed to create project');
             const created = await res.json();
-            //onProjectCreated(created);
-            //onClose();
+
+            onCreate({
+                _id: created.task._id,
+                name,
+                description,
+                checklistItems: created.checklist,
+                date: created.task.createdAt
+            });
+            onClose();
         } catch (err) {
             console.error(err);
             //setError('Something went wrong.');
@@ -86,7 +88,7 @@ const CreateTaskModal = ({ onCreate, onCancel, projectId }) => {
 
                 <div className="modal-actions">
                     <button onClick={handleCreate} className="create-btn">Create</button>
-                    <button onClick={onCancel} className="cancel-btn">Cancel</button>
+                    <button onClick={onClose} className="cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>
