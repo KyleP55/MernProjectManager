@@ -70,12 +70,15 @@ exports.updateTask = async (req, res) => {
 
         // Optional: replace existing checklist items
         if (checklist.length > 0) {
+            console.log(checklist)
             await Checklist.deleteMany({ taskId: task._id });
             await Checklist.insertMany(
                 checklist.map(item => ({
                     ...item,
                     taskId: task._id,
-                    projectId: task.projectId
+                    projectId: task.projectId,
+                    date: task.date,
+                    dateCompleted: task.dateCompleted
                 }))
             );
         }

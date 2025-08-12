@@ -61,6 +61,34 @@
   list-style: none;
   padding-left: 0;
   margin-bottom: 1rem;
+  height: 200px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+/* Chrome, Edge, Safari scrollbar styling */
+.checklist-items::-webkit-scrollbar {
+  width: 8px;
+}
+
+.checklist-items::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+  border-radius: 4px;
+}
+
+.checklist-items::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}
+
+.checklist-items::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Firefox scrollbar styling */
+.checklist-items {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f1f1f1; /* thumb color, track color */
 }
 
 .checklist-items li {
@@ -87,6 +115,15 @@
 
 .create-btn {
   background-color: #28a745;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: red;
   color: white;
   padding: 0.5rem 1rem;
   border: none;
