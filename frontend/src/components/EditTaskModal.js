@@ -39,17 +39,16 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
                     checklist: checklistItems
                 }),
             });
-            console.log(checklistItems)
 
-            if (!res.ok) throw new Error('Failed to create project');
-            const created = await res.json();
+            if (!res.ok) throw new Error('Failed to update project');
+            const edited = await res.json();
 
             onEdit({
-                _id: created.task._id,
+                _id: edited.task._id,
                 name,
                 description,
-                checklistItems: created.checklist,
-                date: created.task.createdAt
+                checklistItems: edited.checklistItems,
+                date: edited.task.date
             });
             onClose();
         } catch (err) {
@@ -95,7 +94,7 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
                 <ul className="checklist-items">
                     {checklistItems.map((item, index) => (
                         <li key={index}>
-                            {item.description}{item.dateCompleted ? "yes" : "no"}
+                            {item.description}{item.dateCompleted != null ? "yes" : "no"}
                             <button onClick={() => handleDeleteChecklistItem(index)}>Delete</button>
                         </li>
                     ))}

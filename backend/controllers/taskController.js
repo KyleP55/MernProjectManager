@@ -69,21 +69,22 @@ exports.updateTask = async (req, res) => {
         if (!task) return res.status(404).json({ error: 'Task not found' });
 
         // Optional: replace existing checklist items
+        let checklistItems;
         if (checklist.length > 0) {
-            console.log(checklist)
+
             await Checklist.deleteMany({ taskId: task._id });
-            await Checklist.insertMany(
+            checklistItems = await Checklist.insertMany(
                 checklist.map(item => ({
                     ...item,
                     taskId: task._id,
                     projectId: task.projectId,
-                    date: task.date,
-                    dateCompleted: task.dateCompleted
+                    date: item.date,
+                    dateCompleted: item.dateCompleted
                 }))
             );
         }
 
-        res.json({ task });
+        res.json({ task, checklistItems });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

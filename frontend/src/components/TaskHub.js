@@ -8,7 +8,6 @@ const BACKEND_URL = 'http://localhost:5000';
 
 const TaskHub = ({ projectId }) => {
     const [tasks, setTasks] = useState([]);
-    const [selectedEditTask, setSelectedEditTask] = useState(null);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -32,10 +31,6 @@ const TaskHub = ({ projectId }) => {
         fetchTasks();
     }, [projectId]);
 
-    const toggleEdit = (taskId) => {
-
-    }
-
     const toggleAccordion = (taskId) => {
         setExpandedTaskId(prev => prev === taskId ? null : taskId);
     };
@@ -48,7 +43,17 @@ const TaskHub = ({ projectId }) => {
             });
 
             const data = await res.json();
-            console.log(data)
+
+            setTasks(prevTasks =>
+                prevTasks.map(task => ({
+                    ...task,
+                    checklistItems: task.checklistItems.map(item =>
+                        item._id === checklistId
+                            ? { ...item, dateCompleted: data.checklistItem.dateCompleted }
+                            : item
+                    )
+                }))
+            );
         } catch (err) {
             console.error('Failed to fetch tasks:', err);
         }
@@ -59,7 +64,11 @@ const TaskHub = ({ projectId }) => {
     };
 
     const handleEditTask = (updatedTask) => {
-        alert('TODO: Update Tasks');
+        setTasks(prev => prev.map(task =>
+            task._id === updatedTask._id
+                ? updatedTask
+                : task
+        ));
     };
 
     const handleDeleteTask = (deletedTask) => {
@@ -122,9 +131,8 @@ const TaskHub = ({ projectId }) => {
                                     <li key={item._id}>
                                         <input
                                             type="checkbox"
-                                            checked={item.dateCompleted}
+                                            checked={!!item.dateCompleted}
                                             onChange={() => toggleCompletedChecklistItem(item._id)}
-                                            readOnly
                                         />
                                         {item.description}
                                     </li>
