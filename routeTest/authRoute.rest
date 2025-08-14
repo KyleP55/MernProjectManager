@@ -1,0 +1,23 @@
+//Create 
+POST http://localhost:5000/auth/ 
+Content-Type: application/json
+
+{
+    "name": "Account Test", 
+    "email": "test@email.com", 
+    "password": "1234",
+    "dob": "1992-07-04"
+}
+
+###
+
+//Login 
+POST http://localhost:5000/auth/login 
+Content-Type: application/json
+
+{
+    "email": "test@email.com", 
+    "password": "1234"
+}
+
+###
