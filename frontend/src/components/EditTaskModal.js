@@ -57,8 +57,23 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
         }
     };
 
-    const handleDelete = async () => {
+    const handleDeleteTask = async () => {
+        if (window.confirm("Are you sure you want to delete this task?")) {
+            let res;
+            try {
+                res = await fetch(`${BACKEND_URL}/tasks/${info._id}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                });
 
+                if (res) {
+                    onDelete(info._id);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+            onClose();
+        }
     }
 
     return (
@@ -102,7 +117,7 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
 
                 <div className="modal-actions">
                     <button onClick={handleEdit} className="create-btn">Update</button>
-                    <button onClick={handleDelete} className="delete-btn">Delete</button>
+                    <button onClick={handleDeleteTask} className="delete-btn">Delete</button>
                     <button onClick={onClose} className="cancel-btn">Cancel</button>
                 </div>
             </div>

@@ -71,8 +71,8 @@ const TaskHub = ({ projectId }) => {
         ));
     };
 
-    const handleDeleteTask = (deletedTask) => {
-        alert('TODO: Remove Task');
+    const handleDeleteTask = (deletedTaskId) => {
+        setTasks(prev => prev.filter((val) => val._id !== deletedTaskId));
     };
 
     return (
