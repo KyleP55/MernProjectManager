@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../css/TaskHub.css';
 
+import TaskLogger from './TaskLogger';
 import CreateTaskModal from './CreateTaskModal';
 import EditTaskModal from './EditTaskModal';
 
@@ -77,73 +78,76 @@ const TaskHub = ({ projectId }) => {
 
     return (
         <div className="task-section">
-            <div className="sidebar-header">
-                <h2>Tasks</h2>
-                <button onClick={() => setShowModal(true)}>New Task</button>
+            {projectId && <>
+                <TaskLogger tasks={tasks} />
+                <div className="sidebar-header">
+                    <h2>Tasks</h2>
+                    <button onClick={() => setShowModal(true)}>New Task</button>
 
-                {showModal && (
-                    <CreateTaskModal
-                        onCreate={handleCreateTask}
-                        onClose={() => setShowModal(false)}
+                    {showModal && (
+                        <CreateTaskModal
+                            onCreate={handleCreateTask}
+                            onClose={() => setShowModal(false)}
+                            projectId={projectId}
+                        />
+                    )}
+                </div>
+
+                {showEditModal && (
+                    <EditTaskModal
+                        info={showEditModal}
+                        onEdit={handleEditTask}
+                        onDelete={handleDeleteTask}
+                        onClose={() => setShowEditModal(false)}
                         projectId={projectId}
                     />
                 )}
-            </div>
 
-            {showEditModal && (
-                <EditTaskModal
-                    info={showEditModal}
-                    onEdit={handleEditTask}
-                    onDelete={handleDeleteTask}
-                    onClose={() => setShowEditModal(false)}
-                    projectId={projectId}
-                />
-            )}
+                {tasks.map(task => (
+                    <div key={task._id} className="task-card">
+                        <div className="task-header">
+                            <h3>{task.name}</h3>
+                            <button
+                                className="edit-btn"
+                                onClick={() => setShowEditModal(task)}
+                            >
+                                ✏️
+                            </button>
+                        </div>
+                        <p className="task-desc">{task.description}</p>
+                        <div className="task-dates">
+                            <span>Start: {task.date?.slice(0, 10)}</span>
+                            <span>End: {task.dateCompleted ? task.dateCompleted?.slice(0, 10) : 'In Progress'}</span>
+                        </div>
 
-            {tasks.map(task => (
-                <div key={task._id} className="task-card">
-                    <div className="task-header">
-                        <h3>{task.name}</h3>
                         <button
-                            className="edit-btn"
-                            onClick={() => setShowEditModal(task)}
+                            className="accordion-toggle"
+                            onClick={() => toggleAccordion(task._id)}
                         >
-                            ✏️
+                            {expandedTaskId === task._id ? 'Hide Checklist ▲' : 'Show Checklist ▼'}
                         </button>
-                    </div>
-                    <p className="task-desc">{task.description}</p>
-                    <div className="task-dates">
-                        <span>Start: {task.date?.slice(0, 10)}</span>
-                        <span>End: {task.dateCompleted ? task.dateCompleted?.slice(0, 10) : 'In Progress'}</span>
-                    </div>
 
-                    <button
-                        className="accordion-toggle"
-                        onClick={() => toggleAccordion(task._id)}
-                    >
-                        {expandedTaskId === task._id ? 'Hide Checklist ▲' : 'Show Checklist ▼'}
-                    </button>
-
-                    {expandedTaskId === task._id && (
-                        <ul className="checklist">
-                            {task.checklistItems && task.checklistItems.length > 0 ? (
-                                task.checklistItems.map(item => (
-                                    <li key={item._id}>
-                                        <input
-                                            type="checkbox"
-                                            checked={!!item.dateCompleted}
-                                            onChange={() => toggleCompletedChecklistItem(item._id)}
-                                        />
-                                        {item.description}
-                                    </li>
-                                ))
-                            ) : (
-                                <li>No checklist items.</li>
-                            )}
-                        </ul>
-                    )}
-                </div>
-            ))}
+                        {expandedTaskId === task._id && (
+                            <ul className="checklist">
+                                {task.checklistItems && task.checklistItems.length > 0 ? (
+                                    task.checklistItems.map(item => (
+                                        <li key={item._id}>
+                                            <input
+                                                type="checkbox"
+                                                checked={!!item.dateCompleted}
+                                                onChange={() => toggleCompletedChecklistItem(item._id)}
+                                            />
+                                            {item.description}
+                                        </li>
+                                    ))
+                                ) : (
+                                    <li>No checklist items.</li>
+                                )}
+                            </ul>
+                        )}
+                    </div>
+                ))}
+            </>}
         </div>
     );
 };
