@@ -5,12 +5,6 @@ const userSchema = new mongoose.Schema({
     name: String,
     email: { type: String, required: true, unique: true },
     password: String,
-    provider: { type: [String], default: ['local'] },
-    providerIds: {
-        type: Map,
-        of: String,
-        default: {}
-    },
     role: { type: String, default: 'user' },
 });
 
