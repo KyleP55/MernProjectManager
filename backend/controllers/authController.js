@@ -51,6 +51,7 @@ const login = async (req, res) => {
 // Refresh
 const refresh = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
+
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token' });
 
     try {
@@ -79,7 +80,6 @@ const logout = (req, res) => {
 
 // Get current user
 const profile = async (req, res) => {
-
     const safeUser = {
         name: req.user.name,
         email: req.user.email,

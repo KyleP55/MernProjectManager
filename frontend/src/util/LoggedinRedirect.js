@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
-function AuthRedirect({ children }) {
+function LoggedinRedirect({ children }) {
     const [isAuth, setIsAuth] = useState(null);
     const nav = useNavigate();
 
@@ -18,7 +18,6 @@ function AuthRedirect({ children }) {
 
                 if (!refresh.ok) {
                     setIsAuth(false);
-                    nav("/");
                     return;
                 }
 
@@ -30,13 +29,12 @@ function AuthRedirect({ children }) {
 
                 if (res.ok) {
                     setIsAuth(true);
+                    nav('/hub');
                 } else {
                     setIsAuth(false);
-                    nav("/");
                 }
             } catch (err) {
                 setIsAuth(false);
-                nav('/');
             }
         }
 
@@ -45,7 +43,7 @@ function AuthRedirect({ children }) {
 
     if (isAuth === null) return <p>Loading...</p>;
 
-    return isAuth ? children : null;
+    return isAuth ? null : children;
 }
 
-export default AuthRedirect;
+export default LoggedinRedirect;

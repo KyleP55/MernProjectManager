@@ -14,18 +14,18 @@ const router = express.Router();
 
 router.route('/')
     .post(register)
-    .delete(deleteAccount, authMiddleware)
+    .delete(authMiddleware, deleteAccount)
 
 router.route('/login')
     .post(login);
 
 router.route('/refresh')
-    .post(refresh);
+    .get(refresh);
 
 router.route('/logout')
     .post(logout);
 
 router.route('/profile')
-    .get(profile, authMiddleware);
+    .get(authMiddleware, profile);
 
 module.exports = router;
