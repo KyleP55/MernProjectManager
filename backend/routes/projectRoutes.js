@@ -10,7 +10,6 @@ const {
     getProjectStats
 } = require('../controllers/projectController');
 
-
 router.route('/')
     .get(getProjects)
     .post(createProject);

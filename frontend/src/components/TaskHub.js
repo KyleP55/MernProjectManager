@@ -21,7 +21,11 @@ const TaskHub = ({ projectId }) => {
 
         const fetchTasks = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/tasks?projectId=${projectId}`);
+                const res = await fetch(`${BACKEND_URL}/tasks?projectId=${projectId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
                 const data = await res.json();
                 setTasks(data);
             } catch (err) {
@@ -41,6 +45,7 @@ const TaskHub = ({ projectId }) => {
             const res = await fetch(`${BACKEND_URL}/checklists/${checklistId}/complete`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
             });
 
             const data = await res.json();

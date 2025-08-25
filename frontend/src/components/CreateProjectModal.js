@@ -19,6 +19,7 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description }),
+                credentials: 'include'
             });
 
             if (!res.ok) throw new Error('Failed to create project');

@@ -6,7 +6,7 @@ const Log = require('../models/Log');
 exports.createProject = async (req, res) => {
     try {
         const { name, description } = req.body;
-        const project = new Project({ name, description });
+        const project = new Project({ name, description, owner: req.user._id });
         await project.save();
         res.status(201).json(project);
     } catch (err) {
@@ -16,7 +16,7 @@ exports.createProject = async (req, res) => {
 
 exports.getProjects = async (req, res) => {
     try {
-        const projects = await Project.find();
+        const projects = await Project.find({ owner: req.user._id });
         res.json(projects);
     } catch (err) {
         res.status(500).json({ error: err.message });

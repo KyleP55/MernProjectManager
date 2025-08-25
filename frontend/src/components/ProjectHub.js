@@ -14,8 +14,13 @@ function ProjectHub({ setProjectId }) {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/projects`);
+                const res = await fetch(`${BACKEND_URL}/projects`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
                 const data = await res.json();
+
                 setProjects(data);
             } catch (err) {
                 console.error('Failed to fetch projects:', err);
@@ -32,7 +37,11 @@ function ProjectHub({ setProjectId }) {
         const fetchStats = async () => {
             setProjectId(selectedProjectId);
             try {
-                const res = await fetch(`${BACKEND_URL}/projects/${selectedProjectId}/stats`);
+                const res = await fetch(`${BACKEND_URL}/projects/${selectedProjectId}/stats`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
                 const data = await res.json();
                 setStats(data);
             } catch (err) {

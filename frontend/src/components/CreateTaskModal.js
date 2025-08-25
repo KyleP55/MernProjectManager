@@ -24,10 +24,11 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
         if (!name.trim()) return alert('Task name is required.');
 
         try {
-            const res = await fetch(`${BACKEND_URL}/tasks`, {
+            const res = await fetch(`${BACKEND_URL}/tasks/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, description, projectId, checklist: checklistItems }),
+                credentials: 'include',
             });
 
             if (!res.ok) throw new Error('Failed to create project');

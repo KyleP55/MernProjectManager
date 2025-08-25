@@ -18,17 +18,19 @@ app.use(cors({
 app.use(cookieParser());
 
 // routes
+const authMiddleware = require('./middleware/auth.js');
 const projectRoutes = require('./routes/projectRoutes.js');
 const tasksRoutes = require('./routes/taskRoutes.js');
 const checklistRoutes = require('./routes/checklistRoutes.js');
 const logRoutes = require('./routes/logRoutes.js');
 const userRoutes = require('./routes/userRoutes.js');
 
+app.use('/auth', userRoutes);
+app.use(authMiddleware);
 app.use('/projects', projectRoutes);
 app.use('/tasks', tasksRoutes);
 app.use('/checklists', checklistRoutes);
 app.use('/logs', logRoutes);
-app.use('/auth', userRoutes);
 
 // mongo/server
 if (process.env.NODE_ENV !== 'test') {
