@@ -16,7 +16,13 @@ exports.createProject = async (req, res) => {
 
 exports.getProjects = async (req, res) => {
     try {
-        const projects = await Project.find({ owner: req.user._id });
+        const projects = await Project.find({
+            $or: [
+                { owner: req.user._id },
+                { members: req.user._id }
+            ]
+        });
+
         res.json(projects);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -25,7 +31,14 @@ exports.getProjects = async (req, res) => {
 
 exports.getProjectById = async (req, res) => {
     try {
-        const project = await Project.findById(req.params.id);
+        const project = await Project.findOne({
+            _id: req.params.id,
+            $or: [
+                { owner: req.user._id },
+                { members: req.user._id }
+            ]
+        });
+
         if (!project) return res.status(404).json({ error: 'Project not found' });
         res.json(project);
     } catch (err) {
@@ -36,32 +49,68 @@ exports.getProjectById = async (req, res) => {
 exports.updateProject = async (req, res) => {
     try {
         const { name, description } = req.body;
-        const updated = await Project.findByIdAndUpdate(
-            req.params.id,
+
+        const updated = await Project.findOneAndUpdate(
+            {
+                _id: req.params.id,
+                $or: [
+                    { owner: req.user._id },
+                    { members: req.user._id }
+                ]
+            },
             { name, description },
             { new: true }
         );
-        if (!updated) return res.status(404).json({ error: 'Project not found' });
+
+        if (!updated) {
+            return res.status(404).json({ error: 'Project not found or access denied' });
+        }
+
         res.json(updated);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
+
 exports.deleteProject = async (req, res) => {
     try {
-        const deleted = await Project.findByIdAndDelete(req.params.id);
-        if (!deleted) return res.status(404).json({ error: 'Project not found' });
+        const deleted = await Project.findOneAndDelete({
+            _id: req.params.id,
+            $or: [
+                { owner: req.user._id },
+                { members: req.user._id }
+            ]
+        });
+
+        if (!deleted) {
+            return res.status(404).json({ error: 'Project not found or access denied' });
+        }
+
         res.json({ message: 'Project deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 };
 
+
 exports.getProjectStats = async (req, res) => {
     const { id: projectId } = req.params;
 
     try {
+        // Ensure user has access to this project
+        const project = await Project.findOne({
+            _id: projectId,
+            $or: [
+                { owner: req.user._id },
+                { members: req.user._id }
+            ]
+        });
+
+        if (!project) {
+            return res.status(404).json({ error: 'Project not found or access denied' });
+        }
+
         // Fetch logs for this project
         const logs = await Log.find({ projectsWorkedOn: projectId });
 
@@ -77,7 +126,7 @@ exports.getProjectStats = async (req, res) => {
 
         // Calculate date range for daily average
         let days = 1;
-        let dailyAvgHours
+        let dailyAvgHours;
         if (logs.length > 1) {
             const times = logs.map(log => new Date(log.timeIn).getTime());
             const min = Math.min(...times);
@@ -111,12 +160,7 @@ exports.getProjectStats = async (req, res) => {
 };
 
 function formatDuration(ms) {
-    const totalMinutes = Math.floor(ms / (1000 * 60));
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    const hourLabel = hours === 1 ? 'hr' : 'hrs';
-    const minuteLabel = minutes === 1 ? 'min' : 'mins';
-
-    return `${hours} ${hourLabel} ${minutes} ${minuteLabel}`;
+    if (!ms || ms <= 0) return "0.00 hr";
+    const hours = ms / (1000 * 60 * 60); // convert ms → hours
+    return `${hours.toFixed(2)} hr`;
 }
