@@ -1,18 +1,26 @@
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
 
+const getProjectAccess = require('../utils/projectAccess');
+
 // Create task + checklists
 exports.createTask = async (req, res) => {
     try {
+        const access = await getProjectAccess(req.body.projectId, req.user._id);
+        if (access != 'owner' && access != 'admin') {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const { name, description, projectId, checklist = [] } = req.body;
 
-        const task = new Task({ name, description, projectId });
+        const task = new Task({ name, description, projectId, owner: req.user._id });
 
         const checklistDocs = await Checklist.insertMany(
             checklist.map(item => ({
                 description: item,
                 projectId,
-                taskId: task._id
+                taskId: task._id,
+                owner: req.body._id
             }))
         );
         await task.save();

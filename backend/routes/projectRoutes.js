@@ -7,7 +7,8 @@ const {
     getProjectById,
     updateProject,
     deleteProject,
-    getProjectStats
+    getProjectStats,
+    addMember
 } = require('../controllers/projectController');
 
 router.route('/')
@@ -16,6 +17,9 @@ router.route('/')
 
 router.route('/:id/stats')
     .get(getProjectStats);
+
+router.route('/:id/addMember')
+    .post(addMember);
 
 router.route('/:id')
     .get(getProjectById)

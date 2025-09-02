@@ -6,7 +6,7 @@ const projectSchema = new mongoose.Schema({
     owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     members: [{
         user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-        roll: {
+        role: {
             type: String,
             enum: ['logger', 'editor', 'admin'],
             default: 'logger'

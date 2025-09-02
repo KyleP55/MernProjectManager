@@ -36,3 +36,14 @@ Content-Type: application/json
 //Get Stats 
 GET  http://localhost:5000/projects/688ecd4b015d533e6bfa78a0/stats
 Content-Type: application/json
+
+###
+
+// Add User
+POST http://localhost:5000/projects/68b72fdf9b981ddc7b81bcde/addMember
+Content-Type: application/json
+
+{
+    "user": "68b735dc5ef9075304b851a7", 
+    "role": "admin"
+}

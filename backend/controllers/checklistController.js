@@ -1,9 +1,16 @@
 const Checklist = require('../models/Checklist');
 const Task = require('../models/Task');
 
+const getProjectAccess = require('../utils/projectAccess');
+
 // Create
 exports.createChecklistItem = async (req, res) => {
     try {
+        const access = await getProjectAccess(req.body.projectId, req.user._id);
+        if (access != 'owner' && access != 'admin' && access != 'member') {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const checklist = await Checklist.create(req.body);
         res.status(201).json(checklist);
     } catch (err) {
