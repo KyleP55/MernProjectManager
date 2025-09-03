@@ -21,22 +21,25 @@ Content-Type: application/json
 //Get all
 GET http://localhost:5000/tasks/ 
 Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YjcyZTNjOWI5ODFkZGM3YjgxYmNjYSIsImVtYWlsIjoibWVAZW1haWwuY29tIiwicm9sZSI6InVzZXIiLCJpYXQiOjE3NTY5MjQ0MjIsImV4cCI6MTc1NjkyODAyMn0.BwJvvFSjRXaAiRNMrMp4SZ-SdhoKsyk7SIMw8nK43kw
 
 
 ###
 
 //Get one
-GET http://localhost:5000/tasks/688c232e8ebf8dae2fdb5be4
+GET http://localhost:5000/tasks/68b8703941031e67bcca999e
 Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Yjg3MDEwNDEwMzFlNjdiY2NhOTk4NiIsImVtYWlsIjoicG93ZWxsLTVAaG90bWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc1NjkyNDU0NiwiZXhwIjoxNzU2OTI4MTQ2fQ.i2-nptuU-5Lmao-Aa4HRdy7HjdyMVYJeYtsuNQjFksM
 
 ###
 
 //Update 
-PUT http://localhost:5000/tasks/688c232e8ebf8dae2fdb5be4
+PUT http://localhost:5000/tasks/68b8703941031e67bcca999e
 Content-Type: application/json
+Cookie: token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4Yjg3MDEwNDEwMzFlNjdiY2NhOTk4NiIsImVtYWlsIjoicG93ZWxsLTVAaG90bWFpbC5jb20iLCJyb2xlIjoidXNlciIsImlhdCI6MTc1NjkyNDU0NiwiZXhwIjoxNzU2OTI4MTQ2fQ.i2-nptuU-5Lmao-Aa4HRdy7HjdyMVYJeYtsuNQjFksM
 
 {
-    "completedDate": "2025-07-31T16:20:00.000Z"
+    "description": "description should not be updated"
 }
 
 ###

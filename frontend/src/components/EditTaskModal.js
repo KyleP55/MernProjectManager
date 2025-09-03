@@ -38,6 +38,7 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
                     description,
                     checklist: checklistItems
                 }),
+                credentials: 'include'
             });
 
             if (!res.ok) throw new Error('Failed to update project');

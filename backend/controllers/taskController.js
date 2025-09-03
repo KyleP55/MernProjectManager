@@ -35,7 +35,13 @@ exports.createTask = async (req, res) => {
 exports.getTasks = async (req, res) => {
     try {
         const { projectId } = req.query;
-        const filter = projectId ? { projectId } : {};
+        const filter = {
+            ...(projectId ? { projectId } : {}),
+            $or: [
+                { owner: req.user._id },
+                { "members.user": req.user._id }
+            ]
+        };
 
         const tasks = await Task.find(filter).sort({ createdAt: -1 });
 
@@ -56,6 +62,11 @@ exports.getTaskById = async (req, res) => {
         const task = await Task.findById(req.params.id);
         if (!task) return res.status(404).json({ error: 'Task not found' });
 
+        const access = await getProjectAccess(task.projectId, req.user._id);
+        if (!access) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
         const checklist = await Checklist.find({ taskId: task._id });
         res.json({ task, checklist });
     } catch (err) {
@@ -67,6 +78,14 @@ exports.getTaskById = async (req, res) => {
 exports.updateTask = async (req, res) => {
     try {
         const { name, description, checklist = [] } = req.body;
+
+        const taskCheck = await Task.findById(req.params.id);
+        if (!taskCheck) return res.status(404).json({ error: 'Task not found' });
+
+        const access = await getProjectAccess(taskCheck.projectId, req.user._id);
+        if (!access) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
 
         const task = await Task.findByIdAndUpdate(
             req.params.id,
