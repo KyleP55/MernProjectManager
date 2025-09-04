@@ -34,14 +34,18 @@ exports.createTask = async (req, res) => {
 // Get all tasks 
 exports.getTasks = async (req, res) => {
     try {
+        // TODO: add admin view all projects when no id provided
+
         const { projectId } = req.query;
-        const filter = {
-            ...(projectId ? { projectId } : {}),
-            $or: [
-                { owner: req.user._id },
-                { "members.user": req.user._id }
-            ]
-        };
+
+        let filter = {};
+        if (projectId) {
+            const access = await getProjectAccess(projectId, req.user._id);
+            if (!access) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+            filter = { projectId: projectId }
+        }
 
         const tasks = await Task.find(filter).sort({ createdAt: -1 });
 
@@ -83,7 +87,7 @@ exports.updateTask = async (req, res) => {
         if (!taskCheck) return res.status(404).json({ error: 'Task not found' });
 
         const access = await getProjectAccess(taskCheck.projectId, req.user._id);
-        if (!access) {
+        if (access !== "owner" && access !== "admin") {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 

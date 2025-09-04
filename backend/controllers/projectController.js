@@ -1,3 +1,4 @@
+const User = require('../models/User');
 const Project = require('../models/Project');
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
@@ -101,14 +102,12 @@ exports.getProjectStats = async (req, res) => {
     const { id: projectId } = req.params;
 
     try {
-        // Ensure user has access to this project
-        const project = await Project.findOne({
-            _id: projectId,
-            $or: [
-                { owner: req.user._id },
-                { members: req.user._id }
-            ]
-        });
+        const access = await getProjectAccess(projectId, req.user._id);
+        if (!access) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        const project = await Project.findOne({ _id: projectId });
 
         if (!project) {
             return res.status(404).json({ error: 'Project not found or access denied' });
@@ -178,15 +177,21 @@ exports.addMember = async (req, res) => {
             return res.status(404).json({ error: "Project not found" });
         }
 
+        //Check if user exists
+        const userExists = await User.findOne({ name: user });
+        if (!userExists) return res.status(404).json({ error: "User Not Found" });
+
         // Check if user already exists in members
-        const existingMember = project.members.find(m => m.user.equals(user));
+        const existingMember = project.members.find(m => m.user.equals(userExists._id));
+
+        console.log(existingMember)
 
         if (existingMember) {
             // Update their role
             existingMember.role = role;
         } else {
             // Add new member
-            project.members.push({ user, role });
+            project.members.push({ user: userExists._id, role });
         }
 
         await project.save();

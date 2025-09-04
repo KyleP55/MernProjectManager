@@ -19,7 +19,7 @@ router.route('/:id/stats')
     .get(getProjectStats);
 
 router.route('/:id/addMember')
-    .post(addMember);
+    .put(addMember);
 
 router.route('/:id')
     .get(getProjectById)
