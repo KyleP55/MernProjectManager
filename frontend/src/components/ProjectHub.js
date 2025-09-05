@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import MembersSection from './MembersSection';
 import CreateProjectModal from '../components/CreateProjectModal';
-import AddMemberModal from './AddMemberModal';
 
 const BACKEND_URL = 'http://localhost:5000';
 
@@ -9,7 +9,6 @@ function ProjectHub({ setProjectId }) {
     const [projects, setProjects] = useState([]);
     const [selectedProjectId, setSelectedProjectId] = useState('');
     const [showProjectModal, setShowProjectModal] = useState(false);
-    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [stats, setStats] = useState(null);
 
     // on Load
@@ -66,19 +65,12 @@ function ProjectHub({ setProjectId }) {
     return (<div className="sidebar">
         <div className="sidebar-header">
             <h2>Projects</h2>
-            {selectedProjectId && <button onClick={() => setShowAddMemberModal(true)}>Add Member</button>}
             <button onClick={() => setShowProjectModal(true)}>New Project</button>
 
             {showProjectModal && (
                 <CreateProjectModal
                     onClose={() => setShowProjectModal(false)}
                     onProjectCreated={handleProjectCreated}
-                />
-            )}
-            {showAddMemberModal && (
-                <AddMemberModal
-                    onClose={() => setShowAddMemberModal(false)}
-                    projectId={selectedProjectId}
                 />
             )}
         </div>
@@ -118,6 +110,8 @@ function ProjectHub({ setProjectId }) {
                         <p>Loading stats...</p>
                     )}
                 </div>
+
+                <MembersSection members={selectedProject.members} projectId={selectedProjectId} />
             </>
         )}
     </div>);

@@ -24,8 +24,8 @@ exports.getProjects = async (req, res) => {
                 { owner: req.user._id },
                 { "members.user": req.user._id }
             ]
-        });
-
+        }).populate('owner', 'name')
+            .populate('members.user', 'name');
 
         res.json(projects);
     } catch (err) {
@@ -35,13 +35,14 @@ exports.getProjects = async (req, res) => {
 
 exports.getProjectById = async (req, res) => {
     try {
-        const project = await Project.findOne({
-            _id: req.params.id,
-            $or: [
-                { owner: req.user._id },
-                { members: req.user._id }
-            ]
-        });
+        const access = await getProjectAccess(projectId, req.user._id);
+        if (!access) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+
+        const project = await Project.findById(req.params.id)
+            .populate('owner', 'name')
+            .populate('members.user', 'name');
 
         if (!project) return res.status(404).json({ error: 'Project not found' });
         res.json(project);
@@ -184,15 +185,9 @@ exports.addMember = async (req, res) => {
         // Check if user already exists in members
         const existingMember = project.members.find(m => m.user.equals(userExists._id));
 
-        console.log(existingMember)
+        if (existingMember) return res.status(200).json({ error: "User already a member." });
 
-        if (existingMember) {
-            // Update their role
-            existingMember.role = role;
-        } else {
-            // Add new member
-            project.members.push({ user: userExists._id, role });
-        }
+        project.members.push({ user: userExists._id, role });
 
         await project.save();
 

@@ -1,0 +1,84 @@
+.members-section {
+  margin-top: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.members-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.members-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.add-btn {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  background: #007bff;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #0056b3;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.member-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: #fff;
+}
+
+.member-info {
+  display: flex;
+  gap: 15px;
+}
+
+.member-name {
+  font-weight: bold;
+}
+
+.member-role {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.edit-btn {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  border: 1px solid #007bff;
+  background: transparent;
+  color: #007bff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background: #007bff;
+  color: white;
+}
+
+.no-members {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: center;
+}
