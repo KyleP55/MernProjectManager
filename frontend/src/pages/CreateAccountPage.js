@@ -31,9 +31,10 @@ const Register = () => {
         }
 
         try {
-            const res = await fetch(`${BACKEND_URL}/auth`, {
+            const res = await fetch(`${BACKEND_URL}/auth/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
                 body: JSON.stringify(form)
             });
 

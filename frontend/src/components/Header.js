@@ -12,7 +12,7 @@ export default function Header() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/auth/profile`, {
+                const res = await fetch(`${BACKEND_URL}/auth/refresh`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include'
@@ -27,7 +27,7 @@ export default function Header() {
             }
         };
 
-        fetchUser();
+        //fetchUser();
     }, [nav]);
 
     const handleLogout = async () => {

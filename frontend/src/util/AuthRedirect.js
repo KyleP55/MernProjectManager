@@ -10,6 +10,17 @@ function AuthRedirect({ children }) {
     useEffect(() => {
         async function checkAuth() {
             try {
+                const exists = document.cookie.includes('loggedin=true');
+                if (!exists) {
+                    setIsAuth(false);
+                    await fetch(`${BACKEND_URL}/auth/logout`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include'
+                    });
+                    return nav('/');
+                }
+
                 const refresh = await fetch(`${BACKEND_URL}/auth/refresh`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
@@ -18,21 +29,9 @@ function AuthRedirect({ children }) {
 
                 if (!refresh.ok) {
                     setIsAuth(false);
-                    nav("/");
-                    return;
-                }
-
-                const res = await fetch(`${BACKEND_URL}/auth/profile`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-
-                if (res.ok) {
-                    setIsAuth(true);
+                    return nav("/");
                 } else {
-                    setIsAuth(false);
-                    nav("/");
+                    setIsAuth(true);
                 }
             } catch (err) {
                 setIsAuth(false);

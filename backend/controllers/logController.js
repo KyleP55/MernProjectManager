@@ -2,6 +2,28 @@ const Log = require('../models/Log');
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
 
+const checkIfLogging = async (req, res) => {
+    try {
+        const log = await Log.findOne({ owner: req.user._id, timeOut: null });
+        return res.status(200).json({
+            loggedIn: !!log,
+            activeLog: log || null
+        });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+const startLog = async (req, res) => {
+    try {
+        const log = await Log.create({ owner: req.user._id, timeIn: new Date });
+        console.log(log._id);
+        return res.status(200).json({ LogId: log._id });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
 const createLog = async (req, res) => {
     try {
         const log = await Log.create(req.body);
@@ -110,6 +132,8 @@ const getTime = async (req, res) => {
 }
 
 module.exports = {
+    checkIfLogging,
+    startLog,
     createLog,
     getLogs,
     getLogById,

@@ -1,6 +1,8 @@
 const express = require('express');
 const {
+    checkIfLogging,
     createLog,
+    startLog,
     getLogs,
     getLogById,
     updateLog,
@@ -13,9 +15,11 @@ const router = express.Router();
 
 router.post('/', createLog);
 router.get('/', getLogs);
+router.post('/start', startLog);
+router.get('/checkIfLogging', checkIfLogging);
 router.get('/getTime', getTime)
 router.get('/:id', getLogById);
-router.put('/:id', updateLog);
+router.patch('/:id', updateLog);
 router.delete('/:id', deleteLog);
 router.patch('/:id/complete', toggleLogComplete);
 

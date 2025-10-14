@@ -1,9 +1,14 @@
 const mongoose = require('mongoose');
 
 const logSchema = new mongoose.Schema({
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     timeIn: { type: Date, required: true, default: Date.now },
     timeOut: { type: Date, default: null },
-    notes: String,
+    notes: { type: String, default: "" },
     projectsWorkedOn: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Project'

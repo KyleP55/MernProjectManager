@@ -3,6 +3,9 @@ const User = require('../models/User.js');
 const { createToken, createRefreshToken, verifyToken } = require('../utils/jwt.js');
 const { setCookie, clearCookie } = require('../utils/cookies.js');
 
+const accessTokenTime = 15; //mins
+const refreshTokenTime = 60 * 24 * 7; //mins
+
 // Register
 const register = async (req, res) => {
     const { email, password, name, dob } = req.body;
@@ -16,8 +19,9 @@ const register = async (req, res) => {
         const token = createToken(user);
         const refreshToken = createRefreshToken(user);
 
-        setCookie(res, 'token', token, 15);
-        setCookie(res, 'refreshToken', refreshToken, 60 * 24 * 7);
+        setCookie(res, 'token', token, accessTokenTime, true);
+        setCookie(res, 'loggedin', 'true', refreshTokenTime, false);
+        setCookie(res, 'refreshToken', refreshToken, refreshTokenTime, true);
 
         res.json({ token, user });
     } catch (err) {
@@ -38,8 +42,9 @@ const login = async (req, res) => {
         const token = createToken(user);
         const refreshToken = createRefreshToken(user);
 
-        setCookie(res, 'token', token, 15);
-        setCookie(res, 'refreshToken', refreshToken, 60 * 24 * 7);
+        setCookie(res, 'token', token, accessTokenTime, true);
+        setCookie(res, 'loggedin', 'true', refreshTokenTime, false);
+        setCookie(res, 'refreshToken', refreshToken, refreshTokenTime, true);
 
         res.json({ token, user });
     } catch (err) {
@@ -51,6 +56,7 @@ const login = async (req, res) => {
 // Refresh
 const refresh = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
+    console.log('hit')
 
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token' });
 
@@ -60,9 +66,11 @@ const refresh = async (req, res) => {
         if (!user) return res.status(401).json({ message: 'User not found' });
 
         const newAccessToken = createToken(user);
-        setCookie(res, 'token', newAccessToken, 15);
+        setCookie(res, 'token', newAccessToken, accessTokenTime, true);
+        setCookie(res, 'loggedin', 'true', refreshTokenTime, false);
+        setCookie(res, 'refreshToken', refreshToken, refreshTokenTime, true);
 
-        res.json({ message: 'Access token refreshed' });
+        res.status(200).json({ message: 'Refreshed Token' });
     } catch (err) {
         res.status(403).json({ message: 'Invalid refresh token' });
     }
@@ -74,6 +82,7 @@ const refresh = async (req, res) => {
 const logout = (req, res) => {
     clearCookie(res, 'token');
     clearCookie(res, 'refreshToken');
+    clearCookie(res, 'loggedin');
 
     res.status(200).json({ message: 'Logged out successfully' });
 };

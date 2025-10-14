@@ -6,7 +6,7 @@ const BACKEND_URL = 'http://localhost:5000';
 
 const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
     const [isLogging, setIsLogging] = useState(false);
-    const [logStartTime, setLogStartTime] = useState(null);
+    const [currentLog, setCurrentLog] = useState(null);
 
     // Clock-out modal state
     const [showModal, setShowModal] = useState(false);
@@ -15,36 +15,57 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
     const [notes, setNotes] = useState('');
 
     useEffect(() => {
-        // Optional: restore last-used selections from localStorage
-        const lastTask = localStorage.getItem('lastTaskId');
-        const lastChecklist = JSON.parse(localStorage.getItem('lastChecklistIds') || '[]');
-        if (lastTask) setSelectedTask(lastTask);
-        if (lastChecklist) setSelectedChecklistItems(lastChecklist);
+        const checkIfLogging = async () => {
+            try {
+                const res = await fetch(`${BACKEND_URL}/logs/checkIfLogging`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include'
+                });
+                const data = await res.json();
+                if (data.loggedIn) {
+                    setIsLogging(true);
+                    setCurrentLog(data.activeLog._id);
+                }
+            } catch (err) {
+                console.error('Failed to fetch tasks:', err);
+            }
+        };
+        checkIfLogging();
     }, []);
 
-    const handleClockIn = () => {
-        setIsLogging(true);
-        setLogStartTime(new Date());
-    };
+    const handleClockIn = async () => {
+        try {
+            const res = await fetch(`${BACKEND_URL}/logs/start`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+            });
+            const data = await res.json();
+            setIsLogging(true);
+            setCurrentLog(data.LogId);
+        } catch (err) {
+            alert('error logging');
+        }
+    }
 
     const handleClockOut = () => {
         setShowModal(true); // Always prompt
     };
 
     const handleSaveLog = async (skipDetails = false) => {
-        const endTime = new Date();
+        console.log(currentLog)
         const logData = {
             projectId,
-            startTime: logStartTime,
-            endTime,
+            timeOut: new Date(),
             taskId: skipDetails ? null : selectedTask || null,
             checklistItemIds: skipDetails ? [] : selectedChecklistItems,
             notes: skipDetails ? '' : notes
         };
 
         try {
-            const res = await fetch(`${BACKEND_URL}/logs`, {
-                method: 'POST',
+            const res = await fetch(`${BACKEND_URL}/logs/${currentLog}`, {
+                method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(logData)
             });

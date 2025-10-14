@@ -1,6 +1,7 @@
-function setCookie(res, name, value, mins) {
+function setCookie(res, name, value, mins, http) {
     res.cookie(name, value, {
-        httpOnly: true,
+        httpOnly: http,
+        path: '/',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Strict',
         maxAge: mins * 60 * 1000,
