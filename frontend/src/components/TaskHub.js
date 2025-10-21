@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../css/TaskHub.css';
 
 import TaskLogger from './TaskLogger';
@@ -73,8 +73,8 @@ const TaskHub = ({ projectId }) => {
 
     return (
         <div className="task-section">
+            <TaskLogger projectId={projectId} />
             {projectId && <>
-                <TaskLogger tasks={tasks} />
                 <div className="sidebar-header">
                     <h2>Tasks</h2>
                     <button onClick={() => setShowModal(true)}>New Task</button>

@@ -3,13 +3,16 @@ import { useApi } from '../util/api';
 
 import "../css/TaskLogger.css"
 
-const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
+const TaskLogger = ({ projectId, onLogSaved }) => {
     const api = useApi();
     const [isLogging, setIsLogging] = useState(false);
     const [currentLog, setCurrentLog] = useState(null);
+    const [projects, setProjects] = useState([]);
+    const [tasks, setTasks] = useState([]);
 
     // Clock-out modal state
     const [showModal, setShowModal] = useState(false);
+    const [selectedProject, setSelectedProject] = useState(projectId ? projectId : '');
     const [selectedTask, setSelectedTask] = useState('');
     const [selectedChecklistItems, setSelectedChecklistItems] = useState([]);
     const [notes, setNotes] = useState('');
@@ -17,17 +20,33 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
     useEffect(() => {
         const checkIfLogging = async () => {
             try {
-                const res = await api.get('/logs/checkIfLogging');
-                if (res.data.loggedIn) {
+                const res = await api.get('/projects');
+                setProjects(res.data);
+
+                const res2 = await api.get('/logs/checkIfLogging');
+                if (res2.data.loggedIn) {
                     setIsLogging(true);
-                    setCurrentLog(res.data.activeLog._id);
+                    setCurrentLog(res2.data.activeLog._id);
                 }
             } catch (err) {
-                console.error('Failed to fetch tasks:', err);
+                console.error('Failed to fetch projects/logging status:', err);
             }
         };
         checkIfLogging();
     }, []);
+
+    useEffect(() => {
+        const updateTasks = async () => {
+            try {
+                const res = await api.get(`/tasks?projectId=${projectId}`);
+                setTasks(res.data);
+            } catch (err) {
+                alert('Failed to fetch Tasks:', err.message);
+            }
+        }
+
+        if (selectedProject !== '') updateTasks();
+    }, [selectedProject]);
 
     const handleClockIn = async () => {
         try {
@@ -44,19 +63,16 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
     };
 
     const handleSaveLog = async (skipDetails = false) => {
-        console.log(currentLog)
         const logData = {
-            projectId,
             timeOut: new Date(),
-            taskId: skipDetails ? null : selectedTask || null,
-            checklistItemIds: skipDetails ? [] : selectedChecklistItems,
+            projectsWorkedOn: selectedProject,
+            tasksWorkedOn: skipDetails ? null : selectedTask || null,
+            checklistsWorkedOn: skipDetails ? [] : selectedChecklistItems,
             notes: skipDetails ? '' : notes
         };
 
         try {
             const res = await api.patch(`/logs/${currentLog}`, logData);
-
-            if (!res.ok) throw new Error('Failed to save log');
             const savedLog = await res.data;
 
             // Remember last-used selections
@@ -71,6 +87,7 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
             setNotes('');
 
             if (onLogSaved) onLogSaved(savedLog);
+            alert('Log Saved!');
         } catch (err) {
             console.error(err);
             alert('Error saving log.');
@@ -97,6 +114,19 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
                 <div className="modal-overlay">
                     <div className="modal">
                         <h2>Clock Out</h2>
+
+                        <label>Project</label>
+                        <select
+                            value={selectedProject}
+                            onChange={e => setSelectedProject(e.target.value)}
+                        >
+                            <option value="">No specific project</option>
+                            {projects.map(project => (
+                                <option key={project._id} value={project._id}>
+                                    {project.name}
+                                </option>
+                            ))}
+                        </select>
 
                         <label>Task</label>
                         <select
