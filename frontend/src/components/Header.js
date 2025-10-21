@@ -1,47 +1,12 @@
-import { Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { useAuth } from "../util/AuthContext";
 import "../css/Header.css";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
-
 export default function Header() {
-    const [user, setUser] = useState(null);
-    const [loaded, setLoaded] = useState(false);
-    const nav = useNavigate();
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const res = await fetch(`${BACKEND_URL}/auth/refresh`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                if (!res.ok) throw new Error("Not authenticated");
-                const data = await res.json();
-                setUser(data.user);
-                setLoaded(true);
-            } catch (err) {
-                console.error(err);
-                setLoaded(true);
-            }
-        };
-
-        //fetchUser();
-    }, [nav]);
+    const { user, loading, logout } = useAuth();
 
     const handleLogout = async () => {
-        try {
-            await fetch(`${BACKEND_URL}/auth/logout`, {
-                method: "POST",
-                credentials: "include",
-            });
-            setUser(null);
-            setLoaded(false);
-            nav("/");
-        } catch (err) {
-            console.error("Logout failed:", err);
-        }
+        await logout();
     };
 
     return (<>
@@ -50,7 +15,7 @@ export default function Header() {
                 <h1 className="header-title">Project Hub</h1>
             </div>
             <div className="header-right">
-                {loaded ? (
+                {!loading ? (
                     <>
                         {user &&
                             <>

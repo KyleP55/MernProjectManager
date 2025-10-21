@@ -1,28 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+import { useAuth } from "./AuthContext";
 
 function LoggedinRedirect({ children }) {
-    const [isAuth, setIsAuth] = useState(null);
     const nav = useNavigate();
+    const { loading, isAuthenticated } = useAuth();
 
     useEffect(() => {
-        async function checkAuth() {
-            const exists = document.cookie.includes('loggedin=true');
-            if (!exists) {
-                setIsAuth(false);
-                return;
-            }
-            nav('/hub');
+        if (!loading && isAuthenticated) {
+            nav("/hub");
         }
+    }, [loading, isAuthenticated, nav]);
 
-        checkAuth();
-    }, [nav]);
+    if (loading === true) return <p>Loading...</p>;
 
-    if (isAuth === null) return <p>Loading...</p>;
 
-    return isAuth ? null : children;
+    return children;
 }
 
 export default LoggedinRedirect;

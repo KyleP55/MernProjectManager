@@ -5,9 +5,10 @@ import TaskLogger from './TaskLogger';
 import CreateTaskModal from './CreateTaskModal';
 import EditTaskModal from './EditTaskModal';
 
-const BACKEND_URL = 'http://localhost:5000';
+import { useApi } from '../util/api';
 
 const TaskHub = ({ projectId }) => {
+    const api = useApi();
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -21,13 +22,8 @@ const TaskHub = ({ projectId }) => {
 
         const fetchTasks = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/tasks?projectId=${projectId}`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                const data = await res.json();
-                setTasks(data);
+                const res = await api.get(`/tasks?projectId=${projectId}`);
+                setTasks(res.data);
             } catch (err) {
                 console.error('Failed to fetch tasks:', err);
             }
@@ -42,20 +38,14 @@ const TaskHub = ({ projectId }) => {
 
     const toggleCompletedChecklistItem = async (checklistId) => {
         try {
-            const res = await fetch(`${BACKEND_URL}/checklists/${checklistId}/complete`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            });
-
-            const data = await res.json();
+            const res = await api.patch(`/checklists/${checklistId}/complete`);
 
             setTasks(prevTasks =>
                 prevTasks.map(task => ({
                     ...task,
                     checklistItems: task.checklistItems.map(item =>
                         item._id === checklistId
-                            ? { ...item, dateCompleted: data.checklistItem.dateCompleted }
+                            ? { ...item, dateCompleted: res.data.checklistItem.dateCompleted }
                             : item
                     )
                 }))

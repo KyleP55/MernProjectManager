@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useApi } from '../util/api';
 import '../css/CreateTaskModal.css';
 
-const BACKEND_URL = 'http://localhost:5000';
 
 const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
+    const api = useApi();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [checklistInput, setChecklistInput] = useState('');
     const [checklistItems, setChecklistItems] = useState([]);
+    const [error, setError] = useState('');
 
     const handleAddChecklistItem = () => {
         if (checklistInput.trim()) {
@@ -24,15 +26,9 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
         if (!name.trim()) return alert('Task name is required.');
 
         try {
-            const res = await fetch(`${BACKEND_URL}/tasks/`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, description, projectId, checklist: checklistItems }),
-                credentials: 'include',
-            });
-
-            if (!res.ok) throw new Error('Failed to create project');
-            const created = await res.json();
+            const body = { name, description, projectId, checklist: checklistItems };
+            const res = await api.post('/tasks/', body)
+            const created = await res.data;
 
             onCreate({
                 _id: created.task._id,
@@ -44,7 +40,7 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
             onClose();
         } catch (err) {
             console.error(err);
-            //setError('Something went wrong.');
+            setError('Something went wrong.');
         }
     };
 

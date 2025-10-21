@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useApi } from '../util/api';
 import '../css/CreateProjectModal.css';
 
 const BACKEND_URL = 'http://localhost:5000';
 
 const CreateProjectModal = ({ onClose, onProjectCreated }) => {
+    const api = useApi();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
@@ -15,16 +17,10 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
         }
 
         try {
-            const res = await fetch(`${BACKEND_URL}/projects`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, description }),
-                credentials: 'include'
-            });
+            const body = { name, description }
+            const res = await api.post('/projects', body);
 
-            if (!res.ok) throw new Error('Failed to create project');
-            const created = await res.json();
-            onProjectCreated(created);
+            onProjectCreated(res.data);
             onClose();
         } catch (err) {
             console.error(err);

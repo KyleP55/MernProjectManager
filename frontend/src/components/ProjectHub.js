@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useApi } from '../util/api';
 
 import MembersSection from './MembersSection';
 import CreateProjectModal from '../components/CreateProjectModal';
 
-const BACKEND_URL = 'http://localhost:5000';
-
 function ProjectHub({ setProjectId }) {
+    const api = useApi();
     const [projects, setProjects] = useState([]);
     const [selectedProjectId, setSelectedProjectId] = useState('');
     const [showProjectModal, setShowProjectModal] = useState(false);
@@ -15,14 +15,8 @@ function ProjectHub({ setProjectId }) {
     useEffect(() => {
         const fetchProjects = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/projects`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                const data = await res.json();
-
-                setProjects(data);
+                const res = await api.get('/projects');
+                setProjects(res.data);
             } catch (err) {
                 console.error('Failed to fetch projects:', err);
             }
@@ -38,13 +32,8 @@ function ProjectHub({ setProjectId }) {
         const fetchStats = async () => {
             setProjectId(selectedProjectId);
             try {
-                const res = await fetch(`${BACKEND_URL}/projects/${selectedProjectId}/stats`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                const data = await res.json();
-                setStats(data);
+                const res = await api.get(`/projects/${selectedProjectId}/stats`);
+                setStats(res.data);
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
             }

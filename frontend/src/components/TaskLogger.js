@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useApi } from '../util/api';
 
 import "../css/TaskLogger.css"
 
-const BACKEND_URL = 'http://localhost:5000';
-
 const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
+    const api = useApi();
     const [isLogging, setIsLogging] = useState(false);
     const [currentLog, setCurrentLog] = useState(null);
 
@@ -17,15 +17,10 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
     useEffect(() => {
         const checkIfLogging = async () => {
             try {
-                const res = await fetch(`${BACKEND_URL}/logs/checkIfLogging`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include'
-                });
-                const data = await res.json();
-                if (data.loggedIn) {
+                const res = await api.get('/logs/checkIfLogging');
+                if (res.data.loggedIn) {
                     setIsLogging(true);
-                    setCurrentLog(data.activeLog._id);
+                    setCurrentLog(res.data.activeLog._id);
                 }
             } catch (err) {
                 console.error('Failed to fetch tasks:', err);
@@ -36,14 +31,9 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
 
     const handleClockIn = async () => {
         try {
-            const res = await fetch(`${BACKEND_URL}/logs/start`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-            });
-            const data = await res.json();
+            const res = await api.post('/logs/start');
             setIsLogging(true);
-            setCurrentLog(data.LogId);
+            setCurrentLog(res.data.LogId);
         } catch (err) {
             alert('error logging');
         }
@@ -64,14 +54,10 @@ const TaskLogger = ({ projectId, tasks, onLogSaved }) => {
         };
 
         try {
-            const res = await fetch(`${BACKEND_URL}/logs/${currentLog}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(logData)
-            });
+            const res = await api.patch(`/logs/${currentLog}`, logData);
 
             if (!res.ok) throw new Error('Failed to save log');
-            const savedLog = await res.json();
+            const savedLog = await res.data;
 
             // Remember last-used selections
             if (!skipDetails) {

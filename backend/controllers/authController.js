@@ -56,7 +56,6 @@ const login = async (req, res) => {
 // Refresh
 const refresh = async (req, res) => {
     const refreshToken = req.cookies.refreshToken;
-    console.log('hit')
 
     if (!refreshToken) return res.status(401).json({ message: 'No refresh token' });
 
@@ -80,9 +79,9 @@ const refresh = async (req, res) => {
 
 // Logout
 const logout = (req, res) => {
-    clearCookie(res, 'token');
-    clearCookie(res, 'refreshToken');
-    clearCookie(res, 'loggedin');
+    clearCookie(res, 'token', true);
+    clearCookie(res, 'refreshToken', true);
+    clearCookie(res, 'loggedin', false);
 
     res.status(200).json({ message: 'Logged out successfully' });
 };

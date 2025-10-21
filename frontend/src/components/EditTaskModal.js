@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { useApi } from '../util/api';
 import '../css/CreateTaskModal.css';
 
-const BACKEND_URL = 'http://localhost:5000';
-
 const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
+    const api = useApi();
+    const [error, setError] = useState('');
     const [name, setName] = useState(info.name);
     const [description, setDescription] = useState(info.description);
     const [checklistInput, setChecklistInput] = useState('');
@@ -30,19 +31,10 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
         if (!name.trim()) return alert('Task name is required.');
 
         try {
-            const res = await fetch(`${BACKEND_URL}/tasks/${info._id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    description,
-                    checklist: checklistItems
-                }),
-                credentials: 'include'
-            });
-
-            if (!res.ok) throw new Error('Failed to update project');
-            const edited = await res.json();
+            const body = { name, description, checklist: checklistItems };
+            const res = await api.put(`/tasks/${info._id}`, body);
+            const edited = res.data;
+            console.log(edited)
 
             onEdit({
                 _id: edited.task._id,
@@ -54,19 +46,14 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
             onClose();
         } catch (err) {
             console.error(err);
-            //setError('Something went wrong.');
+            setError('Something went wrong.');
         }
     };
 
     const handleDeleteTask = async () => {
         if (window.confirm("Are you sure you want to delete this task?")) {
-            let res;
             try {
-                res = await fetch(`${BACKEND_URL}/tasks/${info._id}`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                });
-
+                const res = await api.delete(`/tasks/${info._id}`);
                 if (res) {
                     onDelete(info._id);
                 }
@@ -110,7 +97,7 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
                 <ul className="checklist-items">
                     {checklistItems.map((item, index) => (
                         <li key={index}>
-                            {item.description}{item.dateCompleted != null ? "yes" : "no"}
+                            {item.description}
                             <button onClick={() => handleDeleteChecklistItem(index)}>Delete</button>
                         </li>
                     ))}

@@ -26,7 +26,7 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
                     members.map((member) => (
                         <div key={member._id} className="member-row">
                             <div className="member-info">
-                                <span className="member-name">{member.user.name}</span>
+                                <span className="member-name">{member.user ? member.user.name : 'Account Deleted'}</span>
                                 <span className="member-role">{member.role}</span>
                             </div>
                             <button

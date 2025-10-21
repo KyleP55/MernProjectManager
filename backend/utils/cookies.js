@@ -8,11 +8,12 @@ function setCookie(res, name, value, mins, http) {
     });
 }
 
-function clearCookie(res, name) {
+function clearCookie(res, name, http) {
     res.clearCookie(name, {
-        httpOnly: true,
+        httpOnly: http,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Strict',
+        path: '/',
     });
 }
 
