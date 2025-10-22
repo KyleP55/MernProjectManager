@@ -125,6 +125,7 @@ exports.getProjectStats = async (req, res) => {
         }
 
         const totalHours = formatDuration(totalMs);
+        console.log(totalHours)
         const totalLogs = logs.length;
 
         // Calculate date range for daily average
@@ -149,6 +150,8 @@ exports.getProjectStats = async (req, res) => {
             projectId,
             dateCompleted: { $ne: null }
         });
+
+        console.log(completedChecklistItems)
 
         res.json({
             totalHours,

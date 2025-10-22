@@ -93,7 +93,7 @@ function ProjectHub({ setProjectId }) {
                             <li>Total Logs: {stats.totalLogs}</li>
                             <li>Daily Avg Hours: {stats.dailyAvgHours}</li>
                             <li>Completed Tasks: {stats.completedTasks}</li>
-                            <li>Completed Subtasks: {stats.completedSubtasks}</li>
+                            <li>Completed Subtasks: {stats.completedChecklistItems}</li>
                         </ul>
                     ) : (
                         <p>Loading stats...</p>

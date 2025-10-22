@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useApi } from "../util/api";
 import { useAuth } from "../util/AuthContext";
 
 import '../css/auth.css';
@@ -9,6 +10,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000"
 
 const Login = () => {
     const nav = useNavigate();
+    const api = useApi();
     const { refresh } = useAuth();
     const [error, setError] = useState('')
     const [form, setForm] = useState({
@@ -37,9 +39,7 @@ const Login = () => {
         }
 
         try {
-            const res = await axios.post(`${BACKEND_URL}/auth/login`,
-                { email: form.email, password: form.password },
-                { withCredentials: true });
+            const res = await api.post('/auth/login', { email: form.email, password: form.password });
 
             if (res.data.token) {
                 refresh();
