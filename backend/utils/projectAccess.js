@@ -1,15 +1,32 @@
+// utils/checkProjectAccess.js
 const Project = require("../models/Project");
+const { ROLE_MAP, ROLES } = require("./roles");
 
-async function getProjectAccess(projectId, userId) {
-    const project = await Project.findById(projectId);
-    if (!project) return null;
+async function checkProjectAccess(projectId, userId, minRole = ROLES.VIEWER) {
+    console.log(' in function', projectId, userId, minRole)
+    const project = await Project.findOne({ _id: projectId });
+    if (!project) {
+        const err = new Error("Project not found");
+        err.status = 404;
+        throw err;
+    }
 
-    if (project.owner.equals(userId)) return "owner";
+    let roleLevel = null;
 
-    const member = project.members.find(m => m.user.equals(userId));
-    if (member) return member.role;
+    if (project.owner.equals(userId)) {
+        roleLevel = ROLE_MAP.owner;
+    } else {
+        const member = project.members.find(m => m.user.equals(userId));
+        if (member && ROLE_MAP[member.role]) roleLevel = ROLE_MAP[member.role];
+    }
 
-    return null;
+    if (!roleLevel || roleLevel < minRole) {
+        const err = new Error("Unauthorized: insufficient permissions");
+        err.status = 403;
+        throw err;
+    }
+
+    return roleLevel;
 }
 
-module.exports = getProjectAccess;
+module.exports = checkProjectAccess;

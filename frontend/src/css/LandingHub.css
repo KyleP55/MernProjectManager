@@ -82,3 +82,28 @@ html, body{
   font-weight: 600;
   margin-bottom: 12px;
 }
+
+.stats-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.stats-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 8px 0;
+  font-size: 1rem;
+}
+
+.stats-list .label {
+  font-weight: 500;
+  color: #333;
+}
+
+.stats-list .value {
+  font-weight: 600;
+  color: #222;
+}

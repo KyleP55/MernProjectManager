@@ -41,9 +41,7 @@ exports.getTasks = async (req, res) => {
         let filter = {};
         if (projectId) {
             const access = await getProjectAccess(projectId, req.user._id);
-            if (!access) {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
+
             filter = { projectId: projectId }
         }
 

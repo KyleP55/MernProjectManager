@@ -3,6 +3,7 @@ const Project = require('../models/Project');
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
 const Log = require('../models/Log');
+const mongoose = require("mongoose");
 
 const getProjectAccess = require('../utils/projectAccess');
 
@@ -36,9 +37,6 @@ exports.getProjects = async (req, res) => {
 exports.getProjectById = async (req, res) => {
     try {
         const access = await getProjectAccess(projectId, req.user._id);
-        if (!access) {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
 
         const project = await Project.findById(req.params.id)
             .populate('owner', 'name')
@@ -101,18 +99,8 @@ exports.deleteProject = async (req, res) => {
 
 exports.getProjectStats = async (req, res) => {
     const { id: projectId } = req.params;
-
     try {
         const access = await getProjectAccess(projectId, req.user._id);
-        if (!access) {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
-
-        const project = await Project.findOne({ _id: projectId });
-
-        if (!project) {
-            return res.status(404).json({ error: 'Project not found or access denied' });
-        }
 
         // Fetch logs for this project
         const logs = await Log.find({ projectsWorkedOn: projectId });

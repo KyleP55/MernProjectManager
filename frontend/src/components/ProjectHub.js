@@ -88,12 +88,12 @@ function ProjectHub({ setProjectId }) {
                 <div className="card">
                     <h3>Stats</h3>
                     {stats ? (
-                        <ul>
-                            <li>Total Hours: {stats.totalHours}</li>
-                            <li>Total Logs: {stats.totalLogs}</li>
-                            <li>Daily Avg Hours: {stats.dailyAvgHours}</li>
-                            <li>Completed Tasks: {stats.completedTasks}</li>
-                            <li>Completed Subtasks: {stats.completedChecklistItems}</li>
+                        <ul className="stats-list">
+                            <li><span className="label">Total Hours:</span><span className="value">{stats.totalHours}</span></li>
+                            <li><span className="label">Total Logs:</span><span className="value">{stats.totalLogs}</span></li>
+                            <li><span className="label">Daily Avg Hours:</span><span className="value">{stats.dailyAvgHours}</span></li>
+                            <li><span className="label">Completed Tasks:</span><span className="value">{stats.completedTasks}</span></li>
+                            <li><span className="label">Completed Subtasks:</span><span className="value">{stats.completedChecklistItems}</span></li>
                         </ul>
                     ) : (
                         <p>Loading stats...</p>
