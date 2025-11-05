@@ -3,9 +3,9 @@ const Project = require('../models/Project');
 const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
 const Log = require('../models/Log');
-const mongoose = require("mongoose");
 
 const getProjectAccess = require('../utils/projectAccess');
+const { ROLES } = require('../utils/roles');
 
 exports.createProject = async (req, res) => {
     try {
@@ -113,7 +113,6 @@ exports.getProjectStats = async (req, res) => {
         }
 
         const totalHours = formatDuration(totalMs);
-        console.log(totalHours)
         const totalLogs = logs.length;
 
         // Calculate date range for daily average
@@ -139,8 +138,6 @@ exports.getProjectStats = async (req, res) => {
             dateCompleted: { $ne: null }
         });
 
-        console.log(completedChecklistItems)
-
         res.json({
             totalHours,
             totalLogs,
@@ -162,7 +159,10 @@ function formatDuration(ms) {
 // Add member
 exports.addMember = async (req, res) => {
     try {
+        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+
         const { user, role } = req.body;
+        console.log(user, role)
 
         const project = await Project.findById(req.params.id);
         if (!project) {
@@ -170,21 +170,54 @@ exports.addMember = async (req, res) => {
         }
 
         //Check if user exists
-        const userExists = await User.findOne({ name: user });
+        const userExists = await User.findOne({
+            name: { $regex: `^${user}$`, $options: "i" }
+        });
         if (!userExists) return res.status(404).json({ error: "User Not Found" });
 
         // Check if user already exists in members
         const existingMember = project.members.find(m => m.user.equals(userExists._id));
 
-        if (existingMember) return res.status(200).json({ error: "User already a member." });
+        if (existingMember) return res.status(409).json({ error: "User already a member." });
 
         project.members.push({ user: userExists._id, role });
 
-        await project.save();
+        let newProject = await project.save();
+        newProject = await newProject.populate('members.user', 'name');
 
-        res.json(project);
+        res.json(newProject);
     } catch (err) {
-        console.error(err);
         res.status(500).json({ error: err.message });
     }
 };
+
+// Edit Members
+exports.editMember = async (req, res) => {
+    try {
+        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+
+        const { userId, newRole } = req.body;
+
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ error: "Project not found" });
+        }
+
+        //Check if user exists
+        const userExists = await User.findById(userId);
+        if (!userExists) return res.status(404).json({ error: "User Not Found" });
+
+        const member = project.members.find(m => m.user.equals(userId));
+        if (!member) return res.status(404).json({ error: "Member not found" });
+
+        member.role = newRole;
+
+        const updatedProject = await project.save();
+        await updatedProject.populate('members.user', 'name');
+
+        res.json(updatedProject);
+
+    } catch (err) {
+        console.log(err.message)
+    }
+}

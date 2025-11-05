@@ -2,9 +2,17 @@ import { useState } from "react";
 import "../css/MembersSection.css";
 
 import AddMemberModal from './AddMemberModal';
+import EditMemberModal from "./EditMemberModal";
 
 export default function MembersSection({ members, projectId, onAddMember, onEditMember }) {
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [showEditMemberModal, setShowEditMemberModal] = useState(false);
+    const [selectedMember, setSelectedMember] = useState(members);
+
+    const onOpenEditMember = (member) => {
+        setSelectedMember(member);
+        setShowEditMemberModal(true);
+    }
 
     return (
         <div className="members-section">
@@ -20,6 +28,15 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
                     <AddMemberModal
                         onClose={() => setShowAddMemberModal(false)}
                         projectId={projectId}
+                        onAddMember={onAddMember}
+                    />
+                )}
+                {showEditMemberModal && (
+                    <EditMemberModal
+                        member={selectedMember}
+                        onClose={() => setShowEditMemberModal(false)}
+                        projectId={projectId}
+                        onEditMember={() => alert('TODO: Add Edit')}
                     />
                 )}
                 {members.length > 0 ? (
@@ -31,7 +48,7 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
                             </div>
                             <button
                                 className="edit-btn"
-                                onClick={() => onEditMember(member)}
+                                onClick={() => onOpenEditMember(member)}
                             >
                                 Edit
                             </button>

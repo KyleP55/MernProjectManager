@@ -2,12 +2,14 @@
 const ROLES = {
     VIEWER: 1,
     EDITOR: 2,
-    OWNER: 3,
+    ADMIN: 3,
+    OWNER: 4,
 };
 
 const ROLE_MAP = {
     viewer: ROLES.VIEWER,
     editor: ROLES.EDITOR,
+    admin: ROLES.ADMIN,
     owner: ROLES.OWNER,
 };
 

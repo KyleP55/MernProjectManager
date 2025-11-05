@@ -8,6 +8,8 @@ import Header from './components/Header';
 import AuthRedirect from './util/AuthRedirect';
 import LoggedinRedirect from './util/LoggedinRedirect';
 
+import './css/Master.css';
+
 function App() {
   return (
     <BrowserRouter>

@@ -8,7 +8,8 @@ const {
     updateProject,
     deleteProject,
     getProjectStats,
-    addMember
+    addMember,
+    editMember
 } = require('../controllers/projectController');
 
 router.route('/')
@@ -18,8 +19,9 @@ router.route('/')
 router.route('/:id/stats')
     .get(getProjectStats);
 
-router.route('/:id/addMember')
-    .put(addMember);
+router.route('/:id/member')
+    .put(addMember)
+    .patch(editMember);
 
 router.route('/:id')
     .get(getProjectById)

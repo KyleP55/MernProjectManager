@@ -28,7 +28,7 @@ function ProjectHub({ setProjectId }) {
     // Fetch Selected Project Data
     useEffect(() => {
         if (!selectedProjectId) return;
-
+        console.log(selectedProjectId)
         const fetchStats = async () => {
             setProjectId(selectedProjectId);
             try {
@@ -49,9 +49,21 @@ function ProjectHub({ setProjectId }) {
         setProjectId(newProject._id);
     };
 
+    // Add Memeber
+    const onAddMemeber = (newMember) => {
+        setProjects(projects =>
+            projects.map(project =>
+                project._id === selectedProjectId ?
+                    newMember :
+                    project
+            )
+        );
+    }
+
     const selectedProject = projects.find(p => p._id === selectedProjectId);
 
     return (<div className="sidebar">
+        {console.log(selectedProject)}
         <div className="sidebar-header">
             <h2>Projects</h2>
             <button onClick={() => setShowProjectModal(true)}>New Project</button>
@@ -100,7 +112,11 @@ function ProjectHub({ setProjectId }) {
                     )}
                 </div>
 
-                <MembersSection members={selectedProject.members} projectId={selectedProjectId} />
+                <MembersSection
+                    members={selectedProject.members}
+                    projectId={selectedProjectId}
+                    onAddMember={onAddMemeber}
+                />
             </>
         )}
     </div>);

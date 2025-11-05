@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useApi } from '../util/api';
 import "../css/AddMemberModal.css";
 
-const BACKEND_URL = 'http://localhost:5000';
-
-function AddMemberModal({ onClose, projectId }) {
+function AddMemberModal({ onClose, projectId, onAddMember }) {
+    const api = useApi();
     const [query, setQuery] = useState("");
     const [role, setRole] = useState("editor");
     const [error, setError] = useState("");
@@ -12,19 +12,15 @@ function AddMemberModal({ onClose, projectId }) {
         e.preventDefault();
 
         try {
-            const res = await fetch(`${BACKEND_URL}/projects/${projectId}/addMember`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ user: query, role: role })
-            });
-            const data = await res.json();
-
-            if (data.error) {
-                return setError(data.error);
-            }
+            const res = await api.put(`/projects/${projectId}/member`, { user: query, role: role });
+            console.log(res.data)
+            const newMember = res.data.members[res.data.members.length - 1];
+            onAddMember(res.data);
+            alert("Member Added!");
+            onClose();
         } catch (err) {
-            console.error('Failed to fetch projects:', err);
+            console.error('Failed to add member:', err.response.data.error || err.message);
+            setError(err.response.data.error || err.message)
         }
     };
 
@@ -56,7 +52,7 @@ function AddMemberModal({ onClose, projectId }) {
                     </button>
                 </form>
 
-                <p>{error}</p>
+                <p className="error-text">{error}</p>
 
                 <button className="close-button" onClick={onClose}>
                     Close

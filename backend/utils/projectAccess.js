@@ -3,7 +3,6 @@ const Project = require("../models/Project");
 const { ROLE_MAP, ROLES } = require("./roles");
 
 async function checkProjectAccess(projectId, userId, minRole = ROLES.VIEWER) {
-    console.log(' in function', projectId, userId, minRole)
     const project = await Project.findOne({ _id: projectId });
     if (!project) {
         const err = new Error("Project not found");
