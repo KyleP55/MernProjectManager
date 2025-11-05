@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useApi } from '../util/api';
 import "../css/AddMemberModal.css";
 
-function EditMemberModal({ member, onClose, projectId, onEditMember }) {
+function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMember }) {
     const api = useApi();
     const [newRole, setNewRole] = useState(member.role);
     const [error, setError] = useState('');
@@ -11,14 +11,28 @@ function EditMemberModal({ member, onClose, projectId, onEditMember }) {
         e.preventDefault();
 
         try {
-            const res = await api.patch(`/projects/${projectId}/member`, { userId: member.user._id, newRole: member.roll });
+            const res = await api.patch(`/projects/${projectId}/member`, {
+                userId: member.user._id, newRole: newRole
+            });
 
-            console.log(res.data.members)
-            onEditMember();
+            onEditMember(res.data);
+            onClose();
         } catch (err) {
-
+            setError(err.message);
         }
     }
+
+    const handleDelete = async () => {
+        try {
+            const res = await api.delete(`/projects/${projectId}/member/delete/${member.user._id}`);
+
+            onDeleteMember(res.data);
+            onClose();
+        } catch (err) {
+            setError(err.message);
+        }
+    }
+
     return (
         <div className="modal-overlay">
             <div className="modal">
@@ -39,7 +53,7 @@ function EditMemberModal({ member, onClose, projectId, onEditMember }) {
                     <button type="submit" className="submit-button">
                         Update
                     </button>
-                    <button type="button" className="close-button">
+                    <button type="button" className="close-button" onClick={handleDelete}>
                         Delete
                     </button>
                 </form>

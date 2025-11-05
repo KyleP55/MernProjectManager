@@ -28,7 +28,6 @@ function ProjectHub({ setProjectId }) {
     // Fetch Selected Project Data
     useEffect(() => {
         if (!selectedProjectId) return;
-        console.log(selectedProjectId)
         const fetchStats = async () => {
             setProjectId(selectedProjectId);
             try {
@@ -60,10 +59,27 @@ function ProjectHub({ setProjectId }) {
         );
     }
 
+    // Edit Member
+    const onEditMember = (updatedProject) => {
+        setProjects(projects => projects.map(project =>
+            project._id === selectedProjectId ?
+                updatedProject : project
+        ))
+        alert('Member Updated!');
+    }
+
+    // Delete Member
+    const onDeleteMember = (updatedProject) => {
+        setProjects(projects => projects.map(project =>
+            project._id === selectedProjectId ?
+                updatedProject : project
+        ))
+        alert('Member Deleted!');
+    }
+
     const selectedProject = projects.find(p => p._id === selectedProjectId);
 
     return (<div className="sidebar">
-        {console.log(selectedProject)}
         <div className="sidebar-header">
             <h2>Projects</h2>
             <button onClick={() => setShowProjectModal(true)}>New Project</button>
@@ -116,6 +132,8 @@ function ProjectHub({ setProjectId }) {
                     members={selectedProject.members}
                     projectId={selectedProjectId}
                     onAddMember={onAddMemeber}
+                    onEditMember={onEditMember}
+                    onDeleteMember={onDeleteMember}
                 />
             </>
         )}

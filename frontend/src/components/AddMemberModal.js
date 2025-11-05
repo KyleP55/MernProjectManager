@@ -13,8 +13,6 @@ function AddMemberModal({ onClose, projectId, onAddMember }) {
 
         try {
             const res = await api.put(`/projects/${projectId}/member`, { user: query, role: role });
-            console.log(res.data)
-            const newMember = res.data.members[res.data.members.length - 1];
             onAddMember(res.data);
             alert("Member Added!");
             onClose();

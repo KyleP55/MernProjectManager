@@ -4,7 +4,7 @@ import "../css/MembersSection.css";
 import AddMemberModal from './AddMemberModal';
 import EditMemberModal from "./EditMemberModal";
 
-export default function MembersSection({ members, projectId, onAddMember, onEditMember }) {
+export default function MembersSection({ members, projectId, onAddMember, onEditMember, onDeleteMember }) {
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [showEditMemberModal, setShowEditMemberModal] = useState(false);
     const [selectedMember, setSelectedMember] = useState(members);
@@ -36,7 +36,8 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
                         member={selectedMember}
                         onClose={() => setShowEditMemberModal(false)}
                         projectId={projectId}
-                        onEditMember={() => alert('TODO: Add Edit')}
+                        onEditMember={onEditMember}
+                        onDeleteMember={onDeleteMember}
                     />
                 )}
                 {members.length > 0 ? (

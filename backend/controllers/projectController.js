@@ -162,7 +162,6 @@ exports.addMember = async (req, res) => {
         const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
 
         const { user, role } = req.body;
-        console.log(user, role)
 
         const project = await Project.findById(req.params.id);
         if (!project) {
@@ -219,5 +218,27 @@ exports.editMember = async (req, res) => {
 
     } catch (err) {
         console.log(err.message)
+    }
+}
+
+// Delete Member
+exports.deleteMember = async (req, res) => {
+    try {
+        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ error: "Project not found" });
+        }
+
+        const updatedProject = await Project.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { members: { user: req.params.userId } } },
+            { new: true }
+        ).populate('members.user', 'name');
+
+        res.json(updatedProject)
+    } catch (err) {
+        console.log(err.message);
     }
 }
