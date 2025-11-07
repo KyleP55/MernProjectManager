@@ -33,6 +33,7 @@ function ProjectHub({ setProjectId }) {
             try {
                 const res = await api.get(`/projects/${selectedProjectId}/stats`);
                 setStats(res.data);
+                console.log(res.data)
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
             }
@@ -120,8 +121,8 @@ function ProjectHub({ setProjectId }) {
                             <li><span className="label">Total Hours:</span><span className="value">{stats.totalHours}</span></li>
                             <li><span className="label">Total Logs:</span><span className="value">{stats.totalLogs}</span></li>
                             <li><span className="label">Daily Avg Hours:</span><span className="value">{stats.dailyAvgHours}</span></li>
-                            <li><span className="label">Completed Tasks:</span><span className="value">{stats.completedTasks}</span></li>
-                            <li><span className="label">Completed Subtasks:</span><span className="value">{stats.completedChecklistItems}</span></li>
+                            <li><span className="label">Completed Tasks:</span><span className="value">{stats.completedTasks}/{stats.totalTasks}</span></li>
+                            <li><span className="label">Completed Subtasks:</span><span className="value">{stats.completedChecklistItems}/{stats.totalChecklist}</span></li>
                         </ul>
                     ) : (
                         <p>Loading stats...</p>

@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const User = require('../models/User');
 const Project = require('../models/Project');
 const Task = require('../models/Task');
@@ -128,25 +129,52 @@ exports.getProjectStats = async (req, res) => {
             dailyAvgHours = formatDuration(totalMs);
         }
 
-        const completedTasks = await Task.countDocuments({
-            projectId,
-            completedDate: { $ne: null }
-        });
+
+        const projectObjectId = new mongoose.Types.ObjectId(projectId);
+
+        const [taskStats] = await Task.aggregate([
+            { $match: { projectId: projectObjectId } },
+            {
+                $group: {
+                    _id: null,
+                    totalTasks: { $sum: 1 },
+                    completedTasks: {
+                        $sum: { $cond: [{ $ne: ["$completedDate", null] }, 1, 0] }
+                    }
+                }
+            }
+        ]);
 
         const completedChecklistItems = await Checklist.countDocuments({
             projectId,
             dateCompleted: { $ne: null }
         });
 
+        const [checklistStats] = await Checklist.aggregate([
+            { $match: { projectId: projectObjectId } },
+            {
+                $group: {
+                    _id: null,
+                    totalCheckListItems: { $sum: 1 },
+                    completedCheckListItems: {
+                        $sum: { $cond: [{ $ne: ["$dateCompleted", null] }, 1, 0] }
+                    }
+                }
+            }
+        ]);
+
         res.json({
             totalHours,
             totalLogs,
             dailyAvgHours,
-            completedTasks,
-            completedChecklistItems
+            completedTasks: taskStats?.completedTasks || 0,
+            completedChecklistItems: checklistStats?.completedCheckListItems || 0,
+            totalTasks: taskStats?.totalTasks || 0,
+            totalChecklist: checklistStats?.totalCheckListItems || 0
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
+        console.log(err.message)
     }
 };
 
