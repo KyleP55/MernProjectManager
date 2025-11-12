@@ -7,9 +7,6 @@ const getProjectAccess = require('../utils/projectAccess');
 exports.createTask = async (req, res) => {
     try {
         const access = await getProjectAccess(req.body.projectId, req.user._id);
-        if (access != 'owner' && access != 'admin') {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
 
         const { name, description, projectId, checklist = [] } = req.body;
 

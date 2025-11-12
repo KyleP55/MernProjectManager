@@ -11,8 +11,16 @@ const { ROLES } = require('../utils/roles');
 exports.createProject = async (req, res) => {
     try {
         const { name, description } = req.body;
-        const project = new Project({ name, description, owner: req.user._id });
+        const project = new Project({
+            name,
+            description,
+            members: [{
+                role: 'owner',
+                user: req.user._id
+            }]
+        });
         await project.save();
+        await project.populate('members.user', 'name');
         res.status(201).json(project);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -23,11 +31,9 @@ exports.getProjects = async (req, res) => {
     try {
         const projects = await Project.find({
             $or: [
-                { owner: req.user._id },
                 { "members.user": req.user._id }
             ]
-        }).populate('owner', 'name')
-            .populate('members.user', 'name');
+        }).populate('members.user', 'name');
 
         res.json(projects);
     } catch (err) {
@@ -40,7 +46,6 @@ exports.getProjectById = async (req, res) => {
         const access = await getProjectAccess(projectId, req.user._id);
 
         const project = await Project.findById(req.params.id)
-            .populate('owner', 'name')
             .populate('members.user', 'name');
 
         if (!project) return res.status(404).json({ error: 'Project not found' });
@@ -223,6 +228,8 @@ exports.editMember = async (req, res) => {
     try {
         const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
 
+        console.log('access', access)
+
         const { userId, newRole } = req.body;
 
         const project = await Project.findById(req.params.id);
@@ -245,7 +252,7 @@ exports.editMember = async (req, res) => {
         res.json(updatedProject);
 
     } catch (err) {
-        console.log(err.message)
+        res.status(403).json({ message: err.message });
     }
 }
 
@@ -267,6 +274,6 @@ exports.deleteMember = async (req, res) => {
 
         res.json(updatedProject)
     } catch (err) {
-        console.log(err.message);
+        res.status(403).json({ message: err.message });
     }
 }

@@ -4,7 +4,10 @@ import "../css/MembersSection.css";
 import AddMemberModal from './AddMemberModal';
 import EditMemberModal from "./EditMemberModal";
 
-export default function MembersSection({ members, projectId, onAddMember, onEditMember, onDeleteMember }) {
+import LoadingSpinner from "./LoadingSpinner";
+import { ROLES } from "../util/roles";
+
+export default function MembersSection({ members, projectId, projectRole, onAddMember, onEditMember, onDeleteMember }) {
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [showEditMemberModal, setShowEditMemberModal] = useState(false);
     const [selectedMember, setSelectedMember] = useState(members);
@@ -18,9 +21,11 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
         <div className="members-section">
             <div className="members-header">
                 <h2>Members</h2>
-                <button className="add-btn" onClick={() => setShowAddMemberModal(true)}>
-                    Add Member
-                </button>
+                {projectRole > ROLES.ADMIN &&
+                    <button className="add-btn" onClick={() => setShowAddMemberModal(true)}>
+                        Add Member
+                    </button>
+                }
             </div>
 
             <div className="members-list">
@@ -47,12 +52,14 @@ export default function MembersSection({ members, projectId, onAddMember, onEdit
                                 <span className="member-name">{member.user ? member.user.name : 'Account Deleted'}</span>
                                 <span className="member-role">{member.role}</span>
                             </div>
-                            <button
-                                className="edit-btn"
-                                onClick={() => onOpenEditMember(member)}
-                            >
-                                Edit
-                            </button>
+                            {projectRole > ROLES.ADMIN &&
+                                <button
+                                    className="edit-btn"
+                                    onClick={() => onOpenEditMember(member)}
+                                >
+                                    Edit
+                                </button>
+                            }
                         </div>
                     ))
                 ) : (

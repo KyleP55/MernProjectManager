@@ -12,12 +12,8 @@ async function checkProjectAccess(projectId, userId, minRole = ROLES.VIEWER) {
 
     let roleLevel = null;
 
-    if (project.owner.equals(userId)) {
-        roleLevel = ROLE_MAP.owner;
-    } else {
-        const member = project.members.find(m => m.user.equals(userId));
-        if (member && ROLE_MAP[member.role]) roleLevel = ROLE_MAP[member.role];
-    }
+    const member = project.members.find(m => m.user.equals(userId));
+    if (member && ROLE_MAP[member.role]) roleLevel = ROLE_MAP[member.role];
 
     if (!roleLevel || roleLevel < minRole) {
         const err = new Error("Unauthorized: insufficient permissions");

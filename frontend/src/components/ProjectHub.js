@@ -1,39 +1,62 @@
 import { useEffect, useState } from 'react';
+import { useAuth } from "../util/AuthContext";
 import { useApi } from '../util/api';
 
 import MembersSection from './MembersSection';
 import CreateProjectModal from '../components/CreateProjectModal';
 
-function ProjectHub({ setProjectId }) {
+import LoadingSpinner from './LoadingSpinner';
+
+function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
     const api = useApi();
+    const { user } = useAuth();
     const [projects, setProjects] = useState([]);
     const [selectedProjectId, setSelectedProjectId] = useState('');
     const [showProjectModal, setShowProjectModal] = useState(false);
     const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     // on Load
     useEffect(() => {
         const fetchProjects = async () => {
+            setLoading(true);
             try {
                 const res = await api.get('/projects');
                 setProjects(res.data);
             } catch (err) {
                 console.error('Failed to fetch projects:', err);
             }
+            setLoading(false);
         };
 
         fetchProjects();
     }, []);
 
+    // Get project role
+    const selectedProject = projects.find(p => p._id === selectedProjectId);
+    useEffect(() => {
+        if (selectedProject) {
+            let role = null;
+
+            let member = selectedProject.members.find(m => m.user._id === user._id);
+            role = member?.role;
+            if (role) {
+                setProjectRole(role);
+            } else {
+                alert('TODO: add function to not display project as role is not found');
+            }
+        }
+    }, [selectedProject]);
+
     // Fetch Selected Project Data
     useEffect(() => {
         if (!selectedProjectId) return;
+
         const fetchStats = async () => {
             setProjectId(selectedProjectId);
             try {
                 const res = await api.get(`/projects/${selectedProjectId}/stats`);
                 setStats(res.data);
-                console.log(res.data)
             } catch (err) {
                 console.error('Failed to fetch stats:', err);
             }
@@ -78,7 +101,6 @@ function ProjectHub({ setProjectId }) {
         alert('Member Deleted!');
     }
 
-    const selectedProject = projects.find(p => p._id === selectedProjectId);
 
     return (<div className="sidebar">
         <div className="sidebar-header">
@@ -116,22 +138,25 @@ function ProjectHub({ setProjectId }) {
 
                 <div className="card">
                     <h3>Stats</h3>
-                    {stats ? (
-                        <ul className="stats-list">
-                            <li><span className="label">Total Hours:</span><span className="value">{stats.totalHours}</span></li>
-                            <li><span className="label">Total Logs:</span><span className="value">{stats.totalLogs}</span></li>
-                            <li><span className="label">Daily Avg Hours:</span><span className="value">{stats.dailyAvgHours}</span></li>
-                            <li><span className="label">Completed Tasks:</span><span className="value">{stats.completedTasks}/{stats.totalTasks}</span></li>
-                            <li><span className="label">Completed Subtasks:</span><span className="value">{stats.completedChecklistItems}/{stats.totalChecklist}</span></li>
-                        </ul>
+                    {!loading ? (
+                        stats && (
+                            <ul className="stats-list">
+                                <li><span className="label">Total Hours:</span><span className="value">{stats.totalHours}</span></li>
+                                <li><span className="label">Total Logs:</span><span className="value">{stats.totalLogs}</span></li>
+                                <li><span className="label">Daily Avg Hours:</span><span className="value">{stats.dailyAvgHours}</span></li>
+                                <li><span className="label">Completed Tasks:</span><span className="value">{stats.completedTasks}/{stats.totalTasks}</span></li>
+                                <li><span className="label">Completed Subtasks:</span><span className="value">{stats.completedChecklistItems}/{stats.totalChecklist}</span></li>
+                            </ul>
+                        )
                     ) : (
-                        <p>Loading stats...</p>
+                        <LoadingSpinner />
                     )}
                 </div>
 
                 <MembersSection
                     members={selectedProject.members}
                     projectId={selectedProjectId}
+                    projectRole={projectRole}
                     onAddMember={onAddMemeber}
                     onEditMember={onEditMember}
                     onDeleteMember={onDeleteMember}

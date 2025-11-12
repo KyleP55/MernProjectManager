@@ -18,7 +18,7 @@ function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMem
             onEditMember(res.data);
             onClose();
         } catch (err) {
-            setError(err.message);
+            setError(err.response.data.message || err.message);
         }
     }
 
@@ -48,6 +48,7 @@ function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMem
                         <option value="admin">Admin</option>
                         <option value="editor">Editor</option>
                         <option value="logger">Logger</option>
+                        <option value="viewer">Viewer</option>
                     </select>
 
                     <button type="submit" className="submit-button">

@@ -6,13 +6,16 @@ import CreateTaskModal from './CreateTaskModal';
 import EditTaskModal from './EditTaskModal';
 
 import { useApi } from '../util/api';
+import { ROLES } from '../util/roles';
+import LoadingSpinner from './LoadingSpinner';
 
-const TaskHub = ({ projectId }) => {
+const TaskHub = ({ projectId, projectRole }) => {
     const api = useApi();
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (!projectId) {
@@ -21,12 +24,14 @@ const TaskHub = ({ projectId }) => {
         }
 
         const fetchTasks = async () => {
+            setLoading(true);
             try {
                 const res = await api.get(`/tasks?projectId=${projectId}`);
                 setTasks(res.data);
             } catch (err) {
                 console.error('Failed to fetch tasks:', err);
             }
+            setLoading(false);
         };
 
         fetchTasks();
@@ -52,6 +57,7 @@ const TaskHub = ({ projectId }) => {
             );
         } catch (err) {
             console.error('Failed to fetch tasks:', err);
+            alert('Failed to fetch tasks:', err);
         }
     }
 
@@ -77,7 +83,7 @@ const TaskHub = ({ projectId }) => {
             {projectId && <>
                 <div className="sidebar-header">
                     <h2>Tasks</h2>
-                    <button onClick={() => setShowModal(true)}>New Task</button>
+                    {!loading && projectRole > ROLES.EDITOR && <button onClick={() => setShowModal(true)}>New Task</button>}
 
                     {showModal && (
                         <CreateTaskModal
@@ -98,21 +104,21 @@ const TaskHub = ({ projectId }) => {
                     />
                 )}
 
-                {tasks.map(task => (
+                {!loading ? (tasks.length > 0 ? (tasks.map(task => (
                     <div key={task._id} className="task-card">
                         <div className="task-header">
                             <h3>{task.name}</h3>
-                            <button
+                            {projectRole > ROLES.EDITOR && <button
                                 className="edit-btn"
                                 onClick={() => setShowEditModal(task)}
                             >
                                 ✏️
-                            </button>
+                            </button>}
                         </div>
                         <p className="task-desc">{task.description}</p>
                         <div className="task-dates">
                             <span>Start: {task.date?.slice(0, 10)}</span>
-                            <span>End: {task.dateCompleted ? task.dateCompleted?.slice(0, 10) : 'In Progress'}</span>
+                            <span>End: {task.completedDate ? task.completedDate?.slice(0, 10) : 'In Progress'}</span>
                         </div>
 
                         <button
@@ -141,7 +147,7 @@ const TaskHub = ({ projectId }) => {
                             </ul>
                         )}
                     </div>
-                ))}
+                ))) : (<h4>No Tasks Currently</h4>)) : (<LoadingSpinner />)}
             </>}
         </div>
     );

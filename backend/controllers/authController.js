@@ -89,6 +89,7 @@ const logout = (req, res) => {
 // Get current user
 const profile = async (req, res) => {
     const safeUser = {
+        _id: req.user._id,
         name: req.user.name,
         email: req.user.email,
         role: req.user.role,
