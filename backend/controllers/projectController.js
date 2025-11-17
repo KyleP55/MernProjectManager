@@ -43,7 +43,7 @@ exports.getProjects = async (req, res) => {
 
 exports.getProjectById = async (req, res) => {
     try {
-        const access = await getProjectAccess(projectId, req.user._id);
+        const access = await getProjectAccess(req.params.id, req.user._id);
 
         const project = await Project.findById(req.params.id)
             .populate('members.user', 'name');
@@ -57,19 +57,17 @@ exports.getProjectById = async (req, res) => {
 
 exports.updateProject = async (req, res) => {
     try {
+        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+
         const { name, description } = req.body;
 
         const updated = await Project.findOneAndUpdate(
             {
                 _id: req.params.id,
-                $or: [
-                    { owner: req.user._id },
-                    { members: req.user._id }
-                ]
             },
             { name, description },
             { new: true }
-        );
+        ).populate('members.user', 'name');
 
         if (!updated) {
             return res.status(404).json({ error: 'Project not found or access denied' });
@@ -84,12 +82,10 @@ exports.updateProject = async (req, res) => {
 
 exports.deleteProject = async (req, res) => {
     try {
+        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.OWNER);
+
         const deleted = await Project.findOneAndDelete({
             _id: req.params.id,
-            $or: [
-                { owner: req.user._id },
-                { members: req.user._id }
-            ]
         });
 
         if (!deleted) {
@@ -227,8 +223,6 @@ exports.addMember = async (req, res) => {
 exports.editMember = async (req, res) => {
     try {
         const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
-
-        console.log('access', access)
 
         const { userId, newRole } = req.body;
 

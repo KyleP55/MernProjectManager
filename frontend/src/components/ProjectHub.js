@@ -5,6 +5,7 @@ import { useApi } from '../util/api';
 import MembersSection from './MembersSection';
 import CreateProjectModal from '../components/CreateProjectModal';
 
+import { ROLES } from '../util/roles';
 import LoadingSpinner from './LoadingSpinner';
 
 function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
@@ -13,6 +14,7 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
     const [projects, setProjects] = useState([]);
     const [selectedProjectId, setSelectedProjectId] = useState('');
     const [showProjectModal, setShowProjectModal] = useState(false);
+    const [createModal, setCreateModal] = useState(true);
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -65,14 +67,35 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         fetchStats();
     }, [selectedProjectId]);
 
-    // Create Project
+    // Projects CRUD
     const handleProjectCreated = (newProject) => {
         setProjects(prev => [...prev, newProject]);
         setSelectedProjectId(newProject._id);
         setProjectId(newProject._id);
     };
 
-    // Add Memeber
+    const handleProjectEdit = (updatedProject) => {
+        setProjects(prev => prev.map(project =>
+            project._id === updatedProject._id ?
+                updatedProject :
+                project
+        ));
+    }
+
+    const deleteProjectPrompt = async () => {
+        if (window.confirm("Delete this project?")) {
+            try {
+                const res = await api.delete(`/projects/${selectedProjectId}`);
+
+                setProjects(prev => prev.filter(project => project._id !== selectedProjectId));
+            } catch (error) {
+                alert(error.response.data.error || error.message);
+            }
+            setSelectedProjectId('');
+        }
+    }
+
+    // Members CRUD
     const onAddMemeber = (newMember) => {
         setProjects(projects =>
             projects.map(project =>
@@ -83,7 +106,6 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         );
     }
 
-    // Edit Member
     const onEditMember = (updatedProject) => {
         setProjects(projects => projects.map(project =>
             project._id === selectedProjectId ?
@@ -92,7 +114,6 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         alert('Member Updated!');
     }
 
-    // Delete Member
     const onDeleteMember = (updatedProject) => {
         setProjects(projects => projects.map(project =>
             project._id === selectedProjectId ?
@@ -105,12 +126,18 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
     return (<div className="sidebar">
         <div className="sidebar-header">
             <h2>Projects</h2>
-            <button onClick={() => setShowProjectModal(true)}>New Project</button>
+            <button onClick={() => {
+                setShowProjectModal(true);
+                setCreateModal(true);
+            }}>New Project</button>
 
             {showProjectModal && (
                 <CreateProjectModal
                     onClose={() => setShowProjectModal(false)}
                     onProjectCreated={handleProjectCreated}
+                    onProjectEdit={handleProjectEdit}
+                    createModal={createModal}
+                    data={selectedProject}
                 />
             )}
         </div>
@@ -132,7 +159,23 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         {selectedProject && (
             <>
                 <div className="card">
-                    <h3>Description</h3>
+                    <div className="cardHeader">
+                        <h3>Description</h3>
+                        {projectRole >= ROLES.ADMIN &&
+                            <div className="headerButtons">
+                                <button onClick={() => {
+                                    setShowProjectModal(true);
+                                    setCreateModal(false);
+                                }}>Edit</button>
+                                {projectRole === ROLES.OWNER &&
+                                    <button
+                                        onClick={deleteProjectPrompt}
+                                        className="redButton"
+                                    >Delete</button>
+                                }
+                            </div>
+                        }
+                    </div>
                     <p style={{ whiteSpace: 'pre-line' }}>{selectedProject.description || 'No description provided.'}</p>
                 </div>
 

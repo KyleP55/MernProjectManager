@@ -2,11 +2,12 @@ const Task = require('../models/Task');
 const Checklist = require('../models/Checklist');
 
 const getProjectAccess = require('../utils/projectAccess');
+const { ROLES } = require('../utils/roles');
 
 // Create task + checklists
 exports.createTask = async (req, res) => {
     try {
-        const access = await getProjectAccess(req.body.projectId, req.user._id);
+        const access = await getProjectAccess(req.body.projectId, req.user._id, ROLES.EDITOR);
 
         const { name, description, projectId, checklist = [] } = req.body;
 
@@ -31,8 +32,6 @@ exports.createTask = async (req, res) => {
 // Get all tasks 
 exports.getTasks = async (req, res) => {
     try {
-        // TODO: add admin view all projects when no id provided
-
         const { projectId } = req.query;
 
         let filter = {};
@@ -62,9 +61,6 @@ exports.getTaskById = async (req, res) => {
         if (!task) return res.status(404).json({ error: 'Task not found' });
 
         const access = await getProjectAccess(task.projectId, req.user._id);
-        if (!access) {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
 
         const checklist = await Checklist.find({ taskId: task._id });
         res.json({ task, checklist });
@@ -81,10 +77,7 @@ exports.updateTask = async (req, res) => {
         const taskCheck = await Task.findById(req.params.id);
         if (!taskCheck) return res.status(404).json({ error: 'Task not found' });
 
-        const access = await getProjectAccess(taskCheck.projectId, req.user._id);
-        if (access !== "owner" && access !== "admin") {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
+        const access = await getProjectAccess(taskCheck.projectId, req.user._id, ROLES.EDITOR);
 
         const task = await Task.findByIdAndUpdate(
             req.params.id,
@@ -120,6 +113,8 @@ exports.updateTask = async (req, res) => {
 
 exports.completeTask = async (req, res) => {
     try {
+        const access = await getProjectAccess(taskCheck.projectId, req.user._id, ROLES.EDITOR);
+
         const task = await Task.findById(req.params.id);
         if (!task) return res.status(404).json({ error: 'Task not found' });
 
@@ -138,8 +133,12 @@ exports.completeTask = async (req, res) => {
 // Delete task + all related checklists
 exports.deleteTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id);
-        if (!task) return res.status(404).json({ error: 'Task not found' });
+        const task = await Task.findById(req.params.id);
+        const access = await getProjectAccess(task.projectId, req.user._id, ROLES.EDITOR);
+
+        const deletedTask = await Task.findByIdAndDelete(req.params.id);
+        if (!deletedTask) return res.status(404).json({ error: 'Task not found' });
+
 
         await Checklist.deleteMany({ taskId: task._id });
 

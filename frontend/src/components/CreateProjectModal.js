@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { useApi } from '../util/api';
 import '../css/CreateProjectModal.css';
 
-const BACKEND_URL = 'http://localhost:5000';
-
-const CreateProjectModal = ({ onClose, onProjectCreated }) => {
+const CreateProjectModal = ({ onClose, onProjectCreated, onProjectEdit, createModal, data }) => {
     const api = useApi();
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
+    const [name, setName] = useState(createModal ? '' : data.name);
+    const [description, setDescription] = useState(createModal ? '' : data.description);
     const [error, setError] = useState('');
 
+    // Handles createtion and edits
     const handleCreate = async () => {
         if (!name.trim()) {
             setError('Project name is required.');
@@ -18,9 +17,15 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
 
         try {
             const body = { name, description }
-            const res = await api.post('/projects', body);
+            let res;
+            if (createModal) {
+                res = await api.post('/projects', body);
+                onProjectCreated(res.data);
+            } else {
+                res = await api.patch(`/projects/${data._id}`, body);
+                onProjectEdit(res.data);
+            }
 
-            onProjectCreated(res.data);
             onClose();
         } catch (err) {
             console.error(err);
@@ -31,7 +36,8 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
     return (
         <div className="modal-backdrop">
             <div className="modal">
-                <h2>Create New Project</h2>
+                {createModal ?
+                    <h2>Create New Project</h2> : <h2>Edit Project</h2>}
 
                 <label>
                     Name:
@@ -56,7 +62,7 @@ const CreateProjectModal = ({ onClose, onProjectCreated }) => {
 
                 <div className="modal-actions">
                     <button className="btn-cancel" onClick={onClose}>Cancel</button>
-                    <button className="btn-create" onClick={handleCreate}>Create</button>
+                    <button className="btn-create" onClick={handleCreate}>{createModal ? 'Create' : 'Update'}</button>
                 </div>
             </div>
         </div>

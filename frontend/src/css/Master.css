@@ -5,3 +5,44 @@
   display: block;
   font-weight: 500;
 }
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+}
+.cardHeader h3 {
+  margin-top: 0px;
+}
+
+.headerButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.headerButtons button {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.headerButtons button:hover {
+  background-color: #1e40af;
+}
+
+.headerButtons .redButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.headerButtons .redButton:hover {
+  background-color: #a82935;
+}

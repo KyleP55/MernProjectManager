@@ -83,7 +83,7 @@ const TaskHub = ({ projectId, projectRole }) => {
             {projectId && <>
                 <div className="sidebar-header">
                     <h2>Tasks</h2>
-                    {!loading && projectRole > ROLES.EDITOR && <button onClick={() => setShowModal(true)}>New Task</button>}
+                    {!loading && projectRole >= ROLES.EDITOR && <button onClick={() => setShowModal(true)}>New Task</button>}
 
                     {showModal && (
                         <CreateTaskModal
@@ -108,7 +108,7 @@ const TaskHub = ({ projectId, projectRole }) => {
                     <div key={task._id} className="task-card">
                         <div className="task-header">
                             <h3>{task.name}</h3>
-                            {projectRole > ROLES.EDITOR && <button
+                            {projectRole >= ROLES.EDITOR && <button
                                 className="edit-btn"
                                 onClick={() => setShowEditModal(task)}
                             >
@@ -137,6 +137,7 @@ const TaskHub = ({ projectId, projectRole }) => {
                                                 type="checkbox"
                                                 checked={!!item.dateCompleted}
                                                 onChange={() => toggleCompletedChecklistItem(item._id)}
+                                                disabled={projectRole < ROLES.EDITOR}
                                             />
                                             {item.description}
                                         </li>

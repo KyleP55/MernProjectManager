@@ -12,7 +12,7 @@ const TaskLogger = ({ projectId, onLogSaved }) => {
 
     // Clock-out modal state
     const [showModal, setShowModal] = useState(false);
-    const [selectedProject, setSelectedProject] = useState(projectId ? projectId : '');
+    const [selectedProject, setSelectedProject] = useState(projectId ? projectId : null);
     const [selectedTask, setSelectedTask] = useState('');
     const [selectedChecklistItems, setSelectedChecklistItems] = useState([]);
     const [notes, setNotes] = useState('');

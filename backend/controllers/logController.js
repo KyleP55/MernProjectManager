@@ -17,7 +17,6 @@ const checkIfLogging = async (req, res) => {
 const startLog = async (req, res) => {
     try {
         const log = await Log.create({ owner: req.user._id, timeIn: new Date });
-        console.log(log._id);
         return res.status(200).json({ LogId: log._id });
     } catch (err) {
         res.status(400).json({ error: err.message });
@@ -100,7 +99,6 @@ const toggleLogComplete = async (req, res) => {
 };
 
 const getTime = async (req, res) => {
-    console.log('hit')
     try {
         const { projectId, taskId, checklistId, startDate, endDate } = req.query;
         const filter = {};

@@ -29,7 +29,7 @@ router.route('/:id/member/delete/:userId')
 
 router.route('/:id')
     .get(getProjectById)
-    .put(updateProject)
+    .patch(updateProject)
     .delete(deleteProject);
 
 module.exports = router;
