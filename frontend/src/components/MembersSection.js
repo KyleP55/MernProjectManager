@@ -21,7 +21,7 @@ export default function MembersSection({ members, projectId, projectRole, onAddM
         <div className="members-section">
             <div className="members-header">
                 <h2>Members</h2>
-                {projectRole > ROLES.ADMIN &&
+                {projectRole >= ROLES.ADMIN &&
                     <button className="add-btn" onClick={() => setShowAddMemberModal(true)}>
                         Add Member
                     </button>
@@ -52,7 +52,7 @@ export default function MembersSection({ members, projectId, projectRole, onAddM
                                 <span className="member-name">{member.user ? member.user.name : 'Account Deleted'}</span>
                                 <span className="member-role">{member.role}</span>
                             </div>
-                            {projectRole > ROLES.ADMIN &&
+                            {projectRole >= ROLES.ADMIN &&
                                 <button
                                     className="edit-btn"
                                     onClick={() => onOpenEditMember(member)}
