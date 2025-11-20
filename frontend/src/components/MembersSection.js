@@ -5,9 +5,9 @@ import AddMemberModal from './AddMemberModal';
 import EditMemberModal from "./EditMemberModal";
 
 import LoadingSpinner from "./LoadingSpinner";
-import { ROLES } from "../util/roles";
+import { ROLES, ROLE_MAP } from "../util/roles";
 
-export default function MembersSection({ members, projectId, projectRole, onAddMember, onEditMember, onDeleteMember }) {
+export default function MembersSection({ members, projectId, projectRole, onAddMember, onEditMember, onDeleteMember, onTransferProject }) {
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
     const [showEditMemberModal, setShowEditMemberModal] = useState(false);
     const [selectedMember, setSelectedMember] = useState(members);
@@ -43,6 +43,8 @@ export default function MembersSection({ members, projectId, projectRole, onAddM
                         projectId={projectId}
                         onEditMember={onEditMember}
                         onDeleteMember={onDeleteMember}
+                        onTransferProject={onTransferProject}
+                        projectRole={projectRole}
                     />
                 )}
                 {members.length > 0 ? (
@@ -52,7 +54,7 @@ export default function MembersSection({ members, projectId, projectRole, onAddM
                                 <span className="member-name">{member.user ? member.user.name : 'Account Deleted'}</span>
                                 <span className="member-role">{member.role}</span>
                             </div>
-                            {projectRole >= ROLES.ADMIN &&
+                            {projectRole >= ROLES.ADMIN && projectRole >= ROLE_MAP[member.role] && ROLE_MAP[member.role] !== ROLES.OWNER &&
                                 <button
                                     className="edit-btn"
                                     onClick={() => onOpenEditMember(member)}

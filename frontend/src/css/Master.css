@@ -15,7 +15,7 @@
   margin-top: 0px;
 }
 
-.headerButtons {
+.headerButtons, .buttonRow {
   display: flex;
   justify-content: space-between;
   gap: 4px;
@@ -43,6 +43,34 @@
   cursor: pointer;
 }
 
-.headerButtons .redButton:hover {
+.headerButtons .redButton:hover, .buttonRow .redButton:hover {
   background-color: #a82935;
+}
+
+.buttonRow .redButton {
+  background-color: #dc3545;
+  color: white;
+  padding: 8px 16px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.buttonRow .greenButton {
+  background-color: #51bb0a;
+  color: white;
+  padding: 8px 16px;
+  width: 100%;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.buttonRow .greenButton:hover {
+  background-color: #3d8d08;
+}
+
+.bottomPad {
+  padding-bottom: 8px;
 }

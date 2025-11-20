@@ -77,6 +77,18 @@ const TaskHub = ({ projectId, projectRole }) => {
         setTasks(prev => prev.filter((val) => val._id !== deletedTaskId));
     };
 
+    // Sorting
+    const handleSort = (sort) => {
+        if (sort === 'pinned') {
+
+        } else if (sort === 'priority') {
+            console.log(tasks)
+            setTasks(tasks => [...tasks].sort((a, b) => a.priority - b.priority));
+        } else if (sort === 'status') {
+
+        }
+    }
+
     return (
         <div className="task-section">
             <TaskLogger projectId={projectId} />
@@ -103,6 +115,15 @@ const TaskHub = ({ projectId, projectRole }) => {
                         projectId={projectId}
                     />
                 )}
+
+                <div className='buttonRow bottomPad'>
+                    <button
+                        onClick={() => handleSort('priority')}
+                        className="greenButton"
+                    >Pinned</button>
+                    <button onClick={() => handleSort('priority')} className="greenButton">Priority</button>
+                    <button onClick={() => handleSort('priority')} className="greenButton">Status</button>
+                </div>
 
                 {!loading ? (tasks.length > 0 ? (tasks.map(task => (
                     <div key={task._id} className="task-card">

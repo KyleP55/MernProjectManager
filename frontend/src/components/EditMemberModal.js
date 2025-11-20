@@ -2,7 +2,9 @@ import { useState } from "react";
 import { useApi } from '../util/api';
 import "../css/AddMemberModal.css";
 
-function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMember }) {
+import { ROLES } from "../util/roles";
+
+function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMember, onTransferProject, projectRole }) {
     const api = useApi();
     const [newRole, setNewRole] = useState(member.role);
     const [error, setError] = useState('');
@@ -18,7 +20,7 @@ function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMem
             onEditMember(res.data);
             onClose();
         } catch (err) {
-            setError(err.response.data.message || err.message);
+            setError(err.response.data.error || err.message);
         }
     }
 
@@ -29,7 +31,18 @@ function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMem
             onDeleteMember(res.data);
             onClose();
         } catch (err) {
-            setError(err.message);
+            setError(err.response.data.error);
+        }
+    }
+
+    const handleTransferOwnership = async () => {
+        try {
+            const res = await api.patch(`/projects/${projectId}/transferOwnership/${member.user._id}`);
+
+            onTransferProject(res.data);
+            onClose();
+        } catch (err) {
+            setError(err.response.data.error);
         }
     }
 
@@ -54,9 +67,16 @@ function EditMemberModal({ member, onClose, projectId, onEditMember, onDeleteMem
                     <button type="submit" className="submit-button">
                         Update
                     </button>
-                    <button type="button" className="close-button" onClick={handleDelete}>
-                        Delete
-                    </button>
+                    <div className="buttonRow">
+                        {projectRole === ROLES.OWNER &&
+                            <button type="button" className="greenButton" onClick={handleTransferOwnership}>
+                                Transfer Ownership
+                            </button>
+                        }
+                        <button type="button" className="redButton" onClick={handleDelete}>
+                            Delete
+                        </button>
+                    </div>
                 </form>
 
                 <p className="error-text">{error}</p>

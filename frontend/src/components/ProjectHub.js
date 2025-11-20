@@ -82,6 +82,14 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         ));
     }
 
+    const handleTransferOwnership = (updatedProject) => {
+        setProjects(prev => prev.map(project =>
+            project._id === updatedProject._id ?
+                updatedProject :
+                project
+        ))
+    }
+
     const deleteProjectPrompt = async () => {
         if (window.confirm("Delete this project?")) {
             try {
@@ -203,6 +211,7 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
                     onAddMember={onAddMemeber}
                     onEditMember={onEditMember}
                     onDeleteMember={onDeleteMember}
+                    onTransferProject={handleTransferOwnership}
                 />
             </>
         )}

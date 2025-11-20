@@ -6,7 +6,7 @@ const Checklist = require('../models/Checklist');
 const Log = require('../models/Log');
 
 const getProjectAccess = require('../utils/projectAccess');
-const { ROLES } = require('../utils/roles');
+const { ROLES, ROLE_MAP } = require('../utils/roles');
 
 exports.createProject = async (req, res) => {
     try {
@@ -222,7 +222,7 @@ exports.addMember = async (req, res) => {
 // Edit Members
 exports.editMember = async (req, res) => {
     try {
-        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+        const accessLevel = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
 
         const { userId, newRole } = req.body;
 
@@ -238,6 +238,8 @@ exports.editMember = async (req, res) => {
         const member = project.members.find(m => m.user.equals(userId));
         if (!member) return res.status(404).json({ error: "Member not found" });
 
+        if (ROLE_MAP[member.role] > accessLevel) return res.status(401).json({ error: 'Unauthorized to edit this member' });
+
         member.role = newRole;
 
         const updatedProject = await project.save();
@@ -246,19 +248,24 @@ exports.editMember = async (req, res) => {
         res.json(updatedProject);
 
     } catch (err) {
-        res.status(403).json({ message: err.message });
+        res.status(403).json({ error: err.message });
     }
 }
 
 // Delete Member
 exports.deleteMember = async (req, res) => {
     try {
-        const access = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
+        const accessLevel = await getProjectAccess(req.params.id, req.user._id, ROLES.ADMIN);
 
         const project = await Project.findById(req.params.id);
         if (!project) {
             return res.status(404).json({ error: "Project not found" });
         }
+
+        const member = project.members.find(m => m.user.equals(req.params.userId));
+        if (!member) return res.status(404).json({ error: "Member not found" });
+
+        if (ROLE_MAP[member.role] > accessLevel) return res.status(401).json({ error: 'Unauthorized to delete this member' });
 
         const updatedProject = await Project.findByIdAndUpdate(
             req.params.id,
@@ -268,6 +275,33 @@ exports.deleteMember = async (req, res) => {
 
         res.json(updatedProject)
     } catch (err) {
-        res.status(403).json({ message: err.message });
+        res.status(403).json({ error: err.message });
+    }
+}
+
+exports.transferOwnership = async (req, res) => {
+    try {
+        const accessLevel = await getProjectAccess(req.params.id, req.user._id, ROLES.OWNER);
+
+        const project = await Project.findById(req.params.id);
+        if (!project) {
+            return res.status(404).json({ error: "Project not found" });
+        }
+
+        const newOwner = project.members.find(m => m.user.equals(req.params.userId));
+
+        const oldOwner = project.members.find(m => m.user.equals(req.user._id));
+        if (!oldOwner || !newOwner) return res.status(404).json({ error: "Member not found" });
+
+        newOwner.role = 'owner';
+        oldOwner.role = 'admin';
+
+        const updatedProject = await project.save();
+
+        await updatedProject.populate('members.user', 'name');
+
+        res.json(updatedProject)
+    } catch (err) {
+        res.status(403).json({ error: err.message });
     }
 }

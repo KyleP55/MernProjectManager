@@ -10,7 +10,8 @@ const {
     getProjectStats,
     addMember,
     editMember,
-    deleteMember
+    deleteMember,
+    transferOwnership
 } = require('../controllers/projectController');
 
 router.route('/')
@@ -26,6 +27,9 @@ router.route('/:id/member')
 
 router.route('/:id/member/delete/:userId')
     .delete(deleteMember);
+
+router.route('/:id/transferOwnership/:userId')
+    .patch(transferOwnership);
 
 router.route('/:id')
     .get(getProjectById)
