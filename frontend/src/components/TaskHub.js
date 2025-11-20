@@ -7,7 +7,9 @@ import EditTaskModal from './EditTaskModal';
 
 import { useApi } from '../util/api';
 import { ROLES } from '../util/roles';
+import { STATUS, STATUS_MAP } from '../util/taskStatus';
 import LoadingSpinner from './LoadingSpinner';
+
 
 const TaskHub = ({ projectId, projectRole }) => {
     const api = useApi();
@@ -79,13 +81,12 @@ const TaskHub = ({ projectId, projectRole }) => {
 
     // Sorting
     const handleSort = (sort) => {
-        if (sort === 'pinned') {
-
+        if (sort === 'date') {
+            setTasks(tasks => [...tasks].sort((a, b) => new Date(b.date) - new Date(a.date)));
         } else if (sort === 'priority') {
-            console.log(tasks)
             setTasks(tasks => [...tasks].sort((a, b) => a.priority - b.priority));
         } else if (sort === 'status') {
-
+            setTasks(tasks => [...tasks].sort((a, b) => STATUS_MAP[b.status] - STATUS_MAP[a.status]));
         }
     }
 
@@ -118,28 +119,31 @@ const TaskHub = ({ projectId, projectRole }) => {
 
                 <div className='buttonRow bottomPad'>
                     <button
-                        onClick={() => handleSort('priority')}
+                        onClick={() => handleSort('date')}
                         className="greenButton"
-                    >Pinned</button>
+                    >Date</button>
                     <button onClick={() => handleSort('priority')} className="greenButton">Priority</button>
-                    <button onClick={() => handleSort('priority')} className="greenButton">Status</button>
+                    <button onClick={() => handleSort('status')} className="greenButton">Status</button>
                 </div>
 
                 {!loading ? (tasks.length > 0 ? (tasks.map(task => (
                     <div key={task._id} className="task-card">
                         <div className="task-header">
                             <h3>{task.name}</h3>
-                            {projectRole >= ROLES.EDITOR && <button
-                                className="edit-btn"
-                                onClick={() => setShowEditModal(task)}
-                            >
-                                ✏️
-                            </button>}
+                            <div>
+                                <span>PR: {task.priority}</span>
+                                {projectRole >= ROLES.EDITOR && <button
+                                    className="edit-btn"
+                                    onClick={() => setShowEditModal(task)}
+                                >
+                                    ✏️
+                                </button>}
+                            </div>
                         </div>
                         <p className="task-desc">{task.description}</p>
                         <div className="task-dates">
                             <span>Start: {task.date?.slice(0, 10)}</span>
-                            <span>End: {task.completedDate ? task.completedDate?.slice(0, 10) : 'In Progress'}</span>
+                            <span>Status: {task.status}</span>
                         </div>
 
                         <button
