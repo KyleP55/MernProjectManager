@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema({
         enum: ['Backlog', 'Active', 'Review', 'Completed'],
         default: 'Backlog'
     },
-    priority: { type: Number, default: 5 }
+    priority: { type: Number, default: 3 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Task', taskSchema);

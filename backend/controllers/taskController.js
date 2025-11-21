@@ -72,7 +72,7 @@ exports.getTaskById = async (req, res) => {
 // Update task + optional checklist items
 exports.updateTask = async (req, res) => {
     try {
-        const { name, description, checklist = [] } = req.body;
+        const { name, description, priority, status, checklist = [] } = req.body;
 
         const taskCheck = await Task.findById(req.params.id);
         if (!taskCheck) return res.status(404).json({ error: 'Task not found' });
@@ -81,7 +81,7 @@ exports.updateTask = async (req, res) => {
 
         const task = await Task.findByIdAndUpdate(
             req.params.id,
-            { name, description },
+            { name, description, priority, status },
             { new: true }
         );
 

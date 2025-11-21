@@ -7,6 +7,7 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
     const api = useApi();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
+    const [priority, setPriority] = useState(3);
     const [checklistInput, setChecklistInput] = useState('');
     const [checklistItems, setChecklistItems] = useState([]);
     const [error, setError] = useState('');
@@ -26,7 +27,7 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
         if (!name.trim()) return alert('Task name is required.');
 
         try {
-            const body = { name, description, projectId, checklist: checklistItems };
+            const body = { name, description, projectId, checklist: checklistItems, priority };
             const res = await api.post('/tasks/', body)
             const created = await res.data;
 
@@ -34,6 +35,8 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
                 _id: created.task._id,
                 name,
                 description,
+                priority,
+                status: 'Backlog',
                 checklistItems: created.checklist,
                 date: created.task.createdAt
             });
@@ -55,6 +58,20 @@ const CreateTaskModal = ({ onCreate, onClose, projectId }) => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                 />
+
+                <label>Priority</label>
+                <select
+                    value={priority}
+                    onChange={e => setPriority(e.target.value)}
+                >
+                    {Array.from({ length: 5 }, (_, i) => i + 1).map(n => (
+                        <option key={n} value={n}>
+                            {n === 1 && n + " High"}
+                            {n === 5 && n + " Low"}
+                            {n !== 1 && n !== 5 && n}
+                        </option>
+                    ))}
+                </select>
 
                 <label>Description</label>
                 <textarea

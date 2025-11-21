@@ -2,11 +2,15 @@ import { useState, useEffect } from 'react';
 import { useApi } from '../util/api';
 import '../css/CreateTaskModal.css';
 
+const statusArr = ['Backlog', 'Active', 'Review', 'Completed'];
+
 const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
     const api = useApi();
     const [error, setError] = useState('');
     const [name, setName] = useState(info.name);
     const [description, setDescription] = useState(info.description);
+    const [priority, setPriority] = useState(info.priority);
+    const [status, setStatus] = useState(info.status);
     const [checklistInput, setChecklistInput] = useState('');
     const [checklistItems, setChecklistItems] = useState(info.checklistItems);
 
@@ -31,15 +35,16 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
         if (!name.trim()) return alert('Task name is required.');
 
         try {
-            const body = { name, description, checklist: checklistItems };
+            const body = { name, description, checklist: checklistItems, priority, status };
             const res = await api.put(`/tasks/${info._id}`, body);
             const edited = res.data;
-            console.log(edited)
 
             onEdit({
                 _id: edited.task._id,
                 name,
                 description,
+                priority,
+                status,
                 checklistItems: edited.checklistItems,
                 date: edited.task.date
             });
@@ -75,6 +80,38 @@ const EditTaskModal = ({ info, onEdit, onClose, onDelete, projectId }) => {
                     value={name}
                     onChange={e => setName(e.target.value)}
                 />
+
+                <div className='buttonRow'>
+                    <div>
+                        <label>Priority</label>
+                        <select
+                            value={priority}
+                            onChange={e => setPriority(e.target.value)}
+                        >
+                            {Array.from({ length: 5 }, (_, i) => i + 1).map(n => (
+                                <option key={n} value={n}>
+                                    {n === 1 && n + " High"}
+                                    {n === 5 && n + " Low"}
+                                    {n !== 1 && n !== 5 && n}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Status</label>
+                        <select
+                            value={status}
+                            onChange={e => setStatus(e.target.value)}
+                        >
+                            {statusArr.map((n, i) => (
+                                <option key={i} value={n}>
+                                    {n}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
 
                 <label>Description</label>
                 <textarea
