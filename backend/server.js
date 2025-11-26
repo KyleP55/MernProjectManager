@@ -35,6 +35,7 @@ app.use('/logs', logRoutes);
 // mongo/server
 if (process.env.NODE_ENV !== 'test') {
     mongoose.connect(MONGO_URI, {
+        dbName: "projectManager",
         useNewUrlParser: true,
         useUnifiedTopology: true
     })
