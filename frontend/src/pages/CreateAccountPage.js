@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useAuth } from "../util/AuthContext";
+
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
 
 const Register = () => {
     const nav = useNavigate();
+    const { refresh } = useAuth();
     const [error, setError] = useState(null);
     const [form, setForm] = useState({
         name: "",
@@ -37,6 +40,8 @@ const Register = () => {
                 credentials: 'include',
                 body: JSON.stringify(form)
             });
+
+            refresh();
 
             nav("/hub");
         } catch (err) {
