@@ -49,26 +49,43 @@ Domain via Namecheap
 todo
 
 📁 Project Structure
+
 root
+
 ├── backend
+
 │   ├── controllers
+
 │   ├── models
+
 │   ├── routes
+
 │   ├── middleware
+
 │   └── server.js
+
 │
+
 └── frontend
+
     ├── public
+
     ├── src
+    
     │   ├── components
+    
     │   ├── pages
+    
     │   ├── hooks
+    
     │   └── context
+    
     └── package.json
+    
 
 🧪 Installation & Setup
 1. Clone the repo
-git clone [https://github.com/YOUR_USERNAME/YOUR_REPO.git](https://github.com/KyleP55/MernProjectManager.git)
+git clone [https://github.com/Kylep55/MernProjectManager.git](https://github.com/KyleP55/MernProjectManager.git)
 cd YOUR_REPO
 2. Install dependencies
 
