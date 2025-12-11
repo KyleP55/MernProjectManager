@@ -74,3 +74,13 @@
 .bottomPad {
   padding-bottom: 8px;
 }
+
+.icon {
+  width: 35px;
+}
+
+.iconRow {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

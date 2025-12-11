@@ -4,6 +4,7 @@ import { useApi } from "../util/api";
 import { useAuth } from "../util/AuthContext";
 
 import '../css/auth.css';
+import inventoryIcon from "../images/inventory.png";
 
 const Login = () => {
     const nav = useNavigate();
@@ -80,17 +81,14 @@ const Login = () => {
                     </div>
                 </form>
 
-                <p className="or-divider">or sign in with</p>
+                <p className="or-divider">Credits:</p>
 
-                <div className="social-buttons">
-                    <a href="http://localhost:5000/auth/google">
-                        <button className="google">Google</button>
-                    </a>
-                    <a href="http://localhost:5000/auth/github">
-                        <button className="github">GitHub</button>
-                    </a>
+                <div className="iconRow">
+                    <img src={inventoryIcon} className="icon" />
+                    <a href="https://www.flaticon.com/free-icons/requirement" title="requirement icons">Requirement icons created by Soremba - Flaticon</a>
                 </div>
             </div>
+
         </div>
     );
 };
