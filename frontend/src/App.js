@@ -25,5 +25,3 @@ function App() {
 }
 
 export default App;
-
-//<LoggedinRedirect><LoginPage /></LoggedinRedirect>

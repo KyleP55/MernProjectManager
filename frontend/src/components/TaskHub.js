@@ -11,7 +11,7 @@ import { STATUS, STATUS_MAP } from '../util/taskStatus';
 import LoadingSpinner from './LoadingSpinner';
 
 
-const TaskHub = ({ projectId, projectRole }) => {
+const TaskHub = ({ projectId, projectRole, refreshStats, refreshProjects }) => {
     const api = useApi();
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
@@ -92,7 +92,7 @@ const TaskHub = ({ projectId, projectRole }) => {
 
     return (
         <div className="task-section">
-            <TaskLogger projectId={projectId} />
+            <TaskLogger projectId={projectId} onLogSaved={() => refreshStats()} refreshProjects={refreshProjects} />
             {projectId && <>
                 <div className="sidebar-header">
                     <h2>Tasks</h2>

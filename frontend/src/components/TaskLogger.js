@@ -3,7 +3,7 @@ import { useApi } from '../util/api';
 
 import "../css/TaskLogger.css"
 
-const TaskLogger = ({ projectId, onLogSaved }) => {
+const TaskLogger = ({ projectId, onLogSaved, refreshProjects }) => {
     const api = useApi();
     const [isLogging, setIsLogging] = useState(false);
     const [currentLog, setCurrentLog] = useState(null);
@@ -33,7 +33,7 @@ const TaskLogger = ({ projectId, onLogSaved }) => {
             }
         };
         checkIfLogging();
-    }, []);
+    }, [refreshProjects]);
 
     useEffect(() => {
         const updateTasks = async () => {
@@ -86,7 +86,7 @@ const TaskLogger = ({ projectId, onLogSaved }) => {
             setSelectedChecklistItems([]);
             setNotes('');
 
-            if (onLogSaved) onLogSaved(savedLog);
+            if (onLogSaved) onLogSaved();
             alert('Log Saved!');
         } catch (err) {
             console.error(err);

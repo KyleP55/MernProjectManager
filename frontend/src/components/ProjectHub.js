@@ -8,7 +8,7 @@ import CreateProjectModal from '../components/CreateProjectModal';
 import { ROLES } from '../util/roles';
 import LoadingSpinner from './LoadingSpinner';
 
-function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
+function ProjectHub({ setProjectId, setProjectRole, projectRole, refreshStats, refreshProjects }) {
     const api = useApi();
     const { user } = useAuth();
     const [projects, setProjects] = useState([]);
@@ -65,7 +65,7 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
         };
 
         fetchStats();
-    }, [selectedProjectId]);
+    }, [selectedProjectId, refreshStats]);
 
     // Projects CRUD
     const handleProjectCreated = (newProject) => {
@@ -102,6 +102,11 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole }) {
             setSelectedProjectId('');
         }
     }
+
+    // Update projects in task component
+    useEffect(() => {
+        refreshProjects();
+    }, [projects]);
 
     // Members CRUD
     const onAddMemeber = (newMember) => {
