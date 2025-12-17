@@ -38,6 +38,7 @@ export default function FeaturesPage() {
         <section className="features-section">
             <h2>Planned Enhancements</h2>
             <ul className="upcoming">
+                <li>Mobile layout</li>
                 <li>User account page for profile and preference management</li>
                 <li>Analytics dashboard to break down logs and visualize time allocation</li>
             </ul>
