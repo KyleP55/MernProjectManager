@@ -1,8 +1,9 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../util/AuthContext";
 import "../css/Header.css";
 
 export default function Header() {
+    const nav = useNavigate();
     const { user, loading, logout } = useAuth();
 
     const handleLogout = async () => {
@@ -12,7 +13,7 @@ export default function Header() {
     return (<>
         <header className="header">
             <div className="header-left">
-                <h1 className="header-title">Project Hub</h1>
+                <h1 className="header-title">Project Manager</h1>
             </div>
             <div className="header-right">
                 {!loading ? (
@@ -23,11 +24,17 @@ export default function Header() {
                                     <p className="user-name">{user.name}</p>
                                     <p className="user-role">{user.role}</p>
                                 </div>
+                                <button onClick={() => nav('/features')} className="blue-btn">
+                                    Features
+                                </button>
                                 <button onClick={handleLogout} className="logout-btn">
                                     Sign Out
                                 </button>
                             </>
                         }
+                        {!user && <button onClick={() => nav('/features')} className="blue-btn">
+                            Features
+                        </button>}
                     </>
                 ) : (
                     <p>Loading...</p>

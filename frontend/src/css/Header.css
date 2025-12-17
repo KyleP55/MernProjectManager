@@ -35,6 +35,20 @@
   color: #d1d5db; /* lighter gray */
 }
 
+.blue-btn {
+  background-color: #2563eb; /* red */
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.blue-btn:hover {
+  background-color: #1e40af; /* darker red */
+}
+
 .logout-btn {
   background-color: #dc2626; /* red */
   border: none;
