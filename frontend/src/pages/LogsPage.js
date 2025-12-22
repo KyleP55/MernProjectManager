@@ -32,7 +32,6 @@ export default function LogsPage() {
     async function fetchLogs() {
       try {
         const res = await api.get(`/logs?projectId=${projectId}`)
-        console.log(res.data[0])
         setLogs(res.data);
       } catch (err) {
         console.error("Failed to fetch logs", err);
@@ -73,9 +72,8 @@ export default function LogsPage() {
     return Object.values(map).filter(d => d.value > 0);
   }, [logs]);
 
-
   const filteredLogs = selectedTaskId
-    ? logs.filter((l) => l.task?._id === selectedTaskId)
+    ? logs.filter((l) => l.tasksWorkedOn.some(t => t._id === selectedTaskId))
     : logs;
 
   if (loading) {
@@ -87,7 +85,6 @@ export default function LogsPage() {
       {/* LEFT: Chart */}
       <div className="logs-chart">
         <h2>Time Spent by Task</h2>
-
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -95,7 +92,8 @@ export default function LogsPage() {
               dataKey="value"
               nameKey="name"
               outerRadius={110}
-              onClick={(data) => setSelectedTaskId(data.taskId)}
+              onClick={
+                (data) => setSelectedTaskId(data.taskId)}
             >
               {chartData.map((_, index) => (
                 <Cell
@@ -104,7 +102,7 @@ export default function LogsPage() {
                 />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip formatter={formatMinutesToHours} />
           </PieChart>
         </ResponsiveContainer>
 
@@ -143,8 +141,8 @@ export default function LogsPage() {
 
               </div>
 
-              {log.description && (
-                <p className="description">{log.description}</p>
+              {log.notes && (
+                <p className="description">{log.notes}</p>
               )}
 
               <span className="date">
@@ -175,3 +173,13 @@ function formatLogDuration(timeIn, timeOut) {
 
   return `${hours}h ${minutes}m`;
 }
+
+function formatMinutesToHours(value) {
+  const hours = Math.floor(value / 60);
+  const minutes = Math.round(value % 60);
+
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+}
+
