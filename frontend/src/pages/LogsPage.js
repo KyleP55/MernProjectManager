@@ -6,6 +6,7 @@ import {
   Cell,
   Tooltip,
   ResponsiveContainer,
+  Legend
 } from "recharts";
 import "../css/Logs.css";
 
@@ -85,13 +86,13 @@ export default function LogsPage() {
       {/* LEFT: Chart */}
       <div className="logs-chart">
         <h2>Time Spent by Task</h2>
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={500}>
           <PieChart>
             <Pie
               data={chartData}
               dataKey="value"
               nameKey="name"
-              outerRadius={110}
+              outerRadius={200}
               onClick={
                 (data) => setSelectedTaskId(data.taskId)}
             >
@@ -103,6 +104,7 @@ export default function LogsPage() {
               ))}
             </Pie>
             <Tooltip formatter={formatMinutesToHours} />
+            <Legend />
           </PieChart>
         </ResponsiveContainer>
 
