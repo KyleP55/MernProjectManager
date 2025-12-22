@@ -47,7 +47,9 @@ const getLogs = async (req, res) => {
             if (endDate) filter.timeIn.$lte = new Date(endDate);
         }
 
-        const logs = await Log.find(filter).sort({ timeIn: -1 });
+        const logs = await Log.find(filter).sort({ timeIn: -1 })
+            .populate('tasksWorkedOn', 'name')
+            .populate('checklistsWorkedOn', 'description');
         res.json(logs);
     } catch (err) {
         res.status(500).json({ error: err.message });

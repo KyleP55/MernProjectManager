@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from "../util/AuthContext";
 import { useApi } from '../util/api';
+import { useNavigate } from 'react-router-dom';
 
 import MembersSection from './MembersSection';
 import CreateProjectModal from '../components/CreateProjectModal';
@@ -9,6 +10,7 @@ import { ROLES } from '../util/roles';
 import LoadingSpinner from './LoadingSpinner';
 
 function ProjectHub({ setProjectId, setProjectRole, projectRole, refreshStats, refreshProjects }) {
+    const nav = useNavigate();
     const api = useApi();
     const { user } = useAuth();
     const [projects, setProjects] = useState([]);
@@ -176,6 +178,9 @@ function ProjectHub({ setProjectId, setProjectRole, projectRole, refreshStats, r
                         <h3>Description</h3>
                         {projectRole >= ROLES.ADMIN &&
                             <div className="headerButtons">
+                                <button onClick={() => {
+                                    nav(`/logs?projectId=${selectedProjectId}`)
+                                }}>View Logs</button>
                                 <button onClick={() => {
                                     setShowProjectModal(true);
                                     setCreateModal(false);

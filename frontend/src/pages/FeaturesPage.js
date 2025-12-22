@@ -41,6 +41,7 @@ export default function FeaturesPage() {
                 <li>Mobile layout</li>
                 <li>User account page for profile and preference management</li>
                 <li>Analytics dashboard to break down logs and visualize time allocation</li>
+                <li>Logs CRUD</li>
             </ul>
         </section>
 
